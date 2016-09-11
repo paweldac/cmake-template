@@ -1,0 +1,5 @@
+project(cmake-template)
+
+cmake_minimum_required(VERSION 3.4)
+
+add_subdirectory(src)
