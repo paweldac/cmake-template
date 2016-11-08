@@ -1,30 +1,50 @@
-sudo: required
-language: generic
-
-addons:
-    apt:
-        sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
-            - george-edison55-precise-backports
-        packages:
-            - clang-3.8
-            - g++-6
-            - valgrind
-            - cmake
-            - cmake-data
+sudo: false
+language: cpp
 
 cache:
-    direcotries:
-        - ${TRAVIS_BUILD_DIR}/boost/boost-1.61.0
+  directories:
+    - ${TRAVIS_BUILD_DIR}/llvm/llvm-3.8
+    - ${TRAVIS_BUILD_DIR}/boost/boost-1.61.0
+    - ${TRAVIS_BUILD_DIR}/cmake
 
 matrix:
     include:
         - os: linux
-          env: CXX=clang++-3.8 CC=clang-3.8 BOOST_VERSION=1.61.0
+          env: CLANG_VERSION=3.8 BOOST_VERSION=1.61.0 BUILD_TYPE=Debug
+          addons:
+            apt:
+              packages:
+                - clang-3.8
+                - g++-5
+              sources:
+                - ubuntu-toolchain-r-test
+                - llvm-toolchain-precise-3.8
         - os: linux
-          env: CXX=g++-6 CC=gcc-6 BOOST_VERSION=1.61.0
-
+          env: CLANG_VERSION=3.8 BOOST_VERSION=1.61.0 BUILD_TYPE=Release
+          addons:
+            apt:
+              packages:
+                - clang-3.8
+                - g++-5
+              sources:
+                - ubuntu-toolchain-r-test
+                - llvm-toolchain-precise-3.8
+        - os: linux
+          env: GCC_VERSION=6 BOOST_VERSION=1.61.0 BUILD_TYPE=Debug
+          addons:
+            apt:
+              packages:
+                - g++-6
+              sources:
+                - ubuntu-toolchain-r-test
+        - os: linux
+          env: GCC_VERSION=6 BOOST_VERSION=1.61.0 BUILD_TYPE=Release
+          addons:
+            apt:
+              packages:
+                - g++-6
+              sources:
+                - ubuntu-toolchain-r-test
 git:
     submodules: false
 
@@ -32,16 +52,55 @@ before_install:
     - git submodule update --init --recursive
 
 install:
-    - BOOST_DIR="${TRAVIS_BUILD_DIR}/boost/boost-${BOOST_VERSION}"
-    - mkdir -p ${BOOST_DIR} && cd ${BOOST_DIR}
-    # Install Boost headers
-    - BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
-    - { travis_retry wget --quiet -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
-    # Build Boost
-    - cd ${BOOST_DIR}/tools/build && ./bootstrap.sh && ./b2 install --prefix=${TRAVIS_BUILD_DIR}/boost/lib/
-    - export PATH=${DEPS_DIR}/boost/lib/bin:${PATH}
+   # Set env variables
+    - if [[ -n "$CLANG_VERSION" ]]; then export CXX=clang++-$CLANG_VERSION CC=clang-$CLANG_VERSION TOOLSET=clang-$CLANG_VERSION; fi
+    - if [[ -n "$GCC_VERSION" ]]; then export CXX=g++-$GCC_VERSION CC=gcc-$GCC_VERSION TOOLSET=gcc-$GCC_VERSION; fi
+   # Install CMake
+    - |
+      if [[ -z "$(ls -A ${TRAVIS_BUILD_DIR}/cmake/bin)" ]]; then
+        CMAKE_URL="https://cmake.org/files/v3.6/cmake-3.6.2-Linux-x86_64.tar.gz"
+        mkdir -p cmake && travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz -C cmake
+      fi
+        export PATH="${TRAVIS_BUILD_DIR}/cmake/bin:${PATH}"
+    # Install the right version of libc++
+    - |
+      if [[ -n "$CLANG_VERSION" && "${TRAVIS_OS_NAME}" == "linux" && "${STDLIB}" != "libstdc++" ]]; then
+        if [[ "$CLANG_VERSION" == "3.8" ]]; then LLVM_VERSION="3.8.1"; fi
+        if [[ "$CLANG_VERSION" == "3.9" ]]; then LLVM_VERSION="3.9.0"; fi
+        LLVM_ROOT="${TRAVIS_BUILD_DIR}/llvm/llvm-${LLVM_VERSION}"
+        LLVM_URL="http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.xz"
+        LIBCXX_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxx-${LLVM_VERSION}.src.tar.xz"
+        LIBCXXABI_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxxabi-${LLVM_VERSION}.src.tar.xz"
+        if [[ -z "$(ls -A ${LLVM_ROOT}/install/include)" ]]; then
+          mkdir -p "${LLVM_ROOT}" "${LLVM_ROOT}/build" "${LLVM_ROOT}/projects/libcxx" "${LLVM_ROOT}/projects/libcxxabi"
+          travis_retry wget --quiet -O - "${LLVM_URL}" | tar --strip-components=1 -xJ -C "${LLVM_ROOT}"
+          travis_retry wget --quiet -O - "${LIBCXX_URL}" | tar --strip-components=1 -xJ -C "${LLVM_ROOT}/projects/libcxx"
+          travis_retry wget --quiet -O - "${LIBCXXABI_URL}" | tar --strip-components=1 -xJ -C "${LLVM_ROOT}/projects/libcxxabi"
+          (cd "${LLVM_ROOT}/build" && cmake .. -DCMAKE_CXX_COMPILER="$CXX" -DCMAKE_C_COMPILER="$CC" -DCMAKE_INSTALL_PREFIX="${LLVM_ROOT}/install" -DCMAKE_BUILD_TYPE=$BUILD_TYPE)
+          (cd "${LLVM_ROOT}/build/projects/libcxx" && make install)
+          (cd "${LLVM_ROOT}/build/projects/libcxxabi" && make install)
+        fi
+        export CXXFLAGS="-I ${LLVM_ROOT}/install/include/c++/v1"
+        export LDFLAGS="-L ${LLVM_ROOT}/install/lib -lc++ -lc++abi"
+        export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${LLVM_ROOT}/install/lib"
+      fi
+    # Install Boost
+    - |
+      if [[ "${BOOST_VERSION}" != "" ]]; then
+        BOOST_DIR=${TRAVIS_BUILD_DIR}/boost/boost-${BOOST_VERSION}
+        if [[ -z "$(ls -A ${BOOST_DIR})" ]]; then
+          BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
+          mkdir -p ${BOOST_DIR}
+          { travis_retry wget --quiet -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
+          (cd ${BOOST_DIR}/tools/build && ./bootstrap.sh && ./b2 install --prefix=${TRAVIS_BUILD_DIR}/boost/b2)
+          export PATH=${TRAVIS_BUILD_DIR}/boost/b2/bin:${PATH}
+          (cd ${BOOST_DIR} && b2 --build-dir=${BOOST_DIR} toolset=${TOOLSET} stage)
+        fi
+      fi
+ 
 
 script:
+    - cd ${TRAVIS_BUILD_DIR}
     - mkdir build
     - cd build
-    - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DBOOST_ROOT=${BOOST_DIR} .. && make
+    - cmake -DCMAKE_CXX_COMPILER="$CXX" -DCMAKE_C_COMPILER="$CC" -DBUILD_TYPE="$BUILD_TYPE" -DCMAKE_VERBOSE_MAKEFILE=ON -DBOOST_ROOT=${BOOST_DIR} .. && make
