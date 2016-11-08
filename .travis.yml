@@ -2,25 +2,28 @@ sudo: required
 language: generic
 
 addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-3.8
-      - george-edison55-precise-backports
-    packages:
-      - clang-3.8
-      - g++-6
-      - valgrind
-      - cmake
-      - cmake-data
-      - libboost-dev
+    apt:
+        sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+            - george-edison55-precise-backports
+        packages:
+            - clang-3.8
+            - g++-6
+            - valgrind
+            - cmake
+            - cmake-data
+
+cache:
+    direcotries:
+        - ${TRAVIS_BUILD_DIR}/boost/boost-1.61.0
 
 matrix:
     include:
-    - os: linux
-      env: CXX=clang++-3.8 CC=clang-3.8
-    - os: linux
-      env: CXX=g++-6 CC=gcc-6
+        - os: linux
+          env: CXX=clang++-3.8 CC=clang-3.8 BOOST_VERSION=1.61.0
+        - os: linux
+          env: CXX=g++-6 CC=gcc-6 BOOST_VERSION=1.61.0
 
 git:
     submodules: false
@@ -28,7 +31,17 @@ git:
 before_install:
     - git submodule update --init --recursive
 
+install:
+    - BOOST_DIR="${TRAVIS_BUILD_DIR}/boost/boost-${BOOST_VERSION}"
+    - mkdir -p ${BOOST_DIR} && cd ${BOOST_DIR}
+    # Install Boost headers
+    - BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
+    - { travis_retry wget --quiet -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
+    # Build Boost
+    - cd ${BOOST_DIR}/tools/build && ./bootstrap.sh && ./b2 install --prefix=${TRAVIS_BUILD_DIR}/boost/lib/
+    - export PATH=${DEPS_DIR}/boost/lib/bin:${PATH}
+
 script:
     - mkdir build
     - cd build
-    - cmake -DCMAKE_VERBOSE_MAKEFILE=ON .. && make
+    - cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DBOOST_ROOT=${BOOST_DIR} .. && make
