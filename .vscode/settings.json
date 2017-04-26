@@ -1,3 +1,35 @@
 // Place your settings in this file to overwrite default and user settings.
 {
+    "C_Cpp.autocomplete": "Disabled",
+    "[cpp]": {
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": false
+        }
+    },
+    "[c]": {
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": false
+        }
+    },
+    "clang.executable": "/usr/bin/clang",
+    "clang.completion.enable": true,    
+    "clang.completion.triggerChars": [
+        ".",
+        ":",
+        ">"
+    ],
+    "clang.diagnostic.enable": true,
+    "clang.diagnostic.delay": 500,
+    "clang.cxxflags": [
+    "-I/usr/include",
+    "-I/usr/local/include",
+    "-I/usr/local/Cellar/boost/1.63.0/include"
+    ],
+    "files.associations": {
+        "*.ipp": "cpp"
+    }
 }
