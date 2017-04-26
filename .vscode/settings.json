@@ -1,6 +1,9 @@
 // Place your settings in this file to overwrite default and user settings.
 {
     "C_Cpp.autocomplete": "Disabled",
+    "C_Cpp.clang_format_formatOnSave": true,
+    "C_Cpp.clang_format_path": "/usr/local/bin/clang-format",
+    "C_Cpp.clang_format_style": "file",
     "[cpp]": {
         "editor.quickSuggestions": {
             "other": true,
