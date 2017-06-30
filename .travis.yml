@@ -11,8 +11,8 @@ addons:
 
 cache:
   directories:
-    - ${TRAVIS_BUILD_DIR}/llvm/llvm-3.9
-    - ${TRAVIS_BUILD_DIR}/llvm/llvm-4.0
+    - ${TRAVIS_BUILD_DIR}/llvm/llvm-3.9.0
+    - ${TRAVIS_BUILD_DIR}/llvm/llvm-4.0.0
     - ${TRAVIS_BUILD_DIR}/boost/boost-1.61.0
     - ${TRAVIS_BUILD_DIR}/cmake
     - ${TRAVIS_BUILD_DIR}/cppcheck
