@@ -54,7 +54,7 @@ install:
   # Install CMake
   - |
     if [[ -z "$(ls -A ${TRAVIS_BUILD_DIR}/cmake/bin)" ]]; then
-      CMAKE_URL="https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz"
+      CMAKE_URL="https://cmake.org/files/v3.10/cmake-3.10.3-Linux-x86_64.tar.gz"
       mkdir -p cmake && travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz -C cmake
     fi
     export PATH="${TRAVIS_BUILD_DIR}/cmake/bin:${PATH}"
