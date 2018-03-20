@@ -1,6 +1,6 @@
 project(cmake-template)
 
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.10)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/clang/compilation-flags.cmake)
