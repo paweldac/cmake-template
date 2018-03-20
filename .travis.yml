@@ -14,31 +14,32 @@ cache:
     - ${TRAVIS_BUILD_DIR}/llvm/llvm-3.9.0
     - ${TRAVIS_BUILD_DIR}/llvm/llvm-4.0.0
     - ${TRAVIS_BUILD_DIR}/boost/boost-1.61.0
+    - ${TRAVIS_BUILD_DIR}/boost/boost-1.66.0
     - ${TRAVIS_BUILD_DIR}/cmake
     - ${TRAVIS_BUILD_DIR}/cppcheck
 
 matrix:
   include:
     - os: linux
-      env: LLVM_VERSION=3.9.0 BOOST_VERSION=1.61.0 CHECK_FORMATTING=TRUE
+      env: LLVM_VERSION=3.9.0 BOOST_VERSION=1.66.0 CHECK_FORMATTING=TRUE
       compiler: clang
     - os: linux
-      env: LLVM_VERSION=3.9.0 BOOST_VERSION=1.61.0 BUILD_TESTS=TRUE BUILD_TYPE=Release
+      env: LLVM_VERSION=3.9.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Release
       compiler: clang
     - os: linux
-      env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.61.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
+      env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
       compiler: clang
     - os: linux
-      env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.61.0 BUILD_TESTS=TRUE BUILD_TYPE=Release
+      env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Release
       compiler: clang
     - os: linux
-      env: GCC_VERSION=6 BOOST_VERSION=1.61.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
+      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
       compiler: gcc
     - os: linux
-      env: GCC_VERSION=6 BOOST_VERSION=1.61.0 BUILD_TESTS=TRUE STATIC_ANALYSIS=TRUE BUILD_TYPE=Debug
+      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE STATIC_ANALYSIS=TRUE BUILD_TYPE=Debug
       compiler: gcc
     - os: linux
-      env: GCC_VERSION=6 BOOST_VERSION=1.61.0 BUILD_TETS=TRUE BUILD_TYPE=Release
+      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TETS=TRUE BUILD_TYPE=Release
       compiler: gcc
 git:
   submodules: false

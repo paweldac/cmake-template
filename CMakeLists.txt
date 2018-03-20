@@ -13,7 +13,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/common/clang-format.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/common/cpp-standard.cmake)
 
 find_package(Threads REQUIRED)
-find_package(Boost 1.61.0 COMPONENTS system REQUIRED)
+find_package(Boost 1.66.0 COMPONENTS system REQUIRED)
 if(Boost_FOUND)
     message("${BOOST_ROOT}")
 endif()
