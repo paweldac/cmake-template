@@ -23,9 +23,8 @@ env:
 
 cache:
   directories:
-    - ${TRAVIS_BUILD_DIR}/llvm/llvm-3.9.0
-    - ${TRAVIS_BUILD_DIR}/llvm/llvm-4.0.0
-    - ${TRAVIS_BUILD_DIR}/boost/boost-1.61.0
+    - ${TRAVIS_BUILD_DIR}/llvm/llvm-4.0.1
+    - ${TRAVIS_BUILD_DIR}/llvm/llvm-5.0.1
     - ${TRAVIS_BUILD_DIR}/boost/boost-1.66.0
     - ${TRAVIS_BUILD_DIR}/cmake
     - ${TRAVIS_BUILD_DIR}/cppcheck
@@ -61,37 +60,41 @@ before_install:
 
 install:
   # Set env variables
-  - if [[ -n "${LLVM_VERSION}" ]]; then export TOOLSET=clang; fi
-  - if [[ -n "${GCC_VERSION}" ]]; then export TOOLSET=gcc CXX=g++-${GCC_VERSION}; fi
+#  - if [[ -n "${LLVM_VERSION}" ]]; then export TOOLSET=clang; fi
+#  - if [[ -n "${GCC_VERSION}" ]]; then export TOOLSET=gcc CXX=g++-${GCC_VERSION}; fi
   # Install CMake
   - |
     if [[ -z "$(ls -A ${TRAVIS_BUILD_DIR}/cmake/bin)" ]]; then
       CMAKE_URL="https://cmake.org/files/v3.10/cmake-3.10.3-Linux-x86_64.tar.gz"
-      mkdir -p cmake && travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz -C cmake
+      mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz -C cmake
+      export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     fi
-    export PATH="${TRAVIS_BUILD_DIR}/cmake/bin:${PATH}"
-  # Install the right version of clang, libc++ and libc++abi
+  - cmake --version
+  # Install the right version of libc++ and libc++abi
+  - echo ${CXX}
   - |
-    if [[ -n "${LLVM_VERSION}" ]]; then
+    if [[ "${CXX%%+*}" == "clang" ]]; then
+      if   [[ "${CXX}" == "clang++-4.0" ]]; then LLVM_VERSION="4.0.1";
+      elif [[ "${CXX}" == "clang++-5.0" ]]; then LLVM_VERSION="5.0.1";
+      fi
+
       LLVM_ROOT="${TRAVIS_BUILD_DIR}/llvm/llvm-${LLVM_VERSION}"
       LLVM_URL="http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.xz"
       LIBCXX_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxx-${LLVM_VERSION}.src.tar.xz"
       LIBCXXABI_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxxabi-${LLVM_VERSION}.src.tar.xz"
-      CLANG_URL="http://llvm.org/releases/${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-14.04.tar.xz"
-      if [[ -z "$(ls -A ${LLVM_ROOT})" ]]; then
-        mkdir -p ${LLVM_ROOT} ${LLVM_ROOT}/build ${LLVM_ROOT}/projects/libcxx ${LLVM_ROOT}/projects/libcxxabi ${LLVM_ROOT}/clang
-        travis_retry wget --quiet -O - ${LLVM_URL}      | tar --strip-components=1 -xJ -C ${LLVM_ROOT}
-        travis_retry wget --quiet -O - ${LIBCXX_URL}    | tar --strip-components=1 -xJ -C ${LLVM_ROOT}/projects/libcxx
-        travis_retry wget --quiet -O - ${LIBCXXABI_URL} | tar --strip-components=1 -xJ -C ${LLVM_ROOT}/projects/libcxxabi
-        travis_retry wget --quiet -O - ${CLANG_URL}     | tar --strip-components=1 -xJ -C ${LLVM_ROOT}/clang
-        (cd ${LLVM_ROOT}/build && cmake .. -DCMAKE_INSTALL_PREFIX=${LLVM_ROOT}/install -DCMAKE_CXX_COMPILER=clang++)
-        (cd ${LLVM_ROOT}/build/projects/libcxx && make install -j2)
-        (cd ${LLVM_ROOT}/build/projects/libcxxabi && make install -j2)
-      fi
-      export CXXFLAGS="-Qunused-arguments -nostdinc++ -isystem ${LLVM_ROOT}/install/include/c++/v1"
+
+      mkdir -p ${LLVM_ROOT} ${LLVM_ROOT}/build ${LLVM_ROOT}/projects/libcxx ${LLVM_ROOT}/projects/libcxxabi ${LLVM_ROOT}/clang
+      travis_retry wget --quiet -O - ${LLVM_URL}      | tar --strip-components=1 -xJ -C ${LLVM_ROOT} || exit 1
+      travis_retry wget --quiet -O - ${LIBCXX_URL}    | tar --strip-components=1 -xJ -C ${LLVM_ROOT}/projects/libcxx || exit 1
+      travis_retry wget --quiet -O - ${LIBCXXABI_URL} | tar --strip-components=1 -xJ -C ${LLVM_ROOT}/projects/libcxxabi || exit 1
+
+      (cd ${LLVM_ROOT}/build && cmake .. -DCMAKE_INSTALL_PREFIX=${LLVM_ROOT}/install) || exit 1
+      (cd ${LLVM_ROOT}/build/projects/libcxx && make install -j2) || exit 1
+      (cd ${LLVM_ROOT}/build/projects/libcxxabi && make install -j2) || exit 1
+
+      export CXXFLAGS="-isystem ${LLVM_ROOT}/install/include/c++/v1"
       export LDFLAGS="-L ${LLVM_ROOT}/install/lib -l c++ -l c++abi"
       export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${LLVM_ROOT}/install/lib"
-      export PATH="${LLVM_ROOT}/clang/bin:${PATH}"
     fi
   - ${CXX} --version
   # Install Boost
@@ -116,7 +119,8 @@ install:
       mkdir -p bin
       mv cppcheck bin/
     fi
-    export PATH="${TRAVIS_BUILD_DIR}/cppcheck/bin:${PATH}"    
+    export PATH="${TRAVIS_BUILD_DIR}/cppcheck/bin:${PATH}"
+  - cppcheck --version
 
 before_script:
   - cd ${TRAVIS_BUILD_DIR}
