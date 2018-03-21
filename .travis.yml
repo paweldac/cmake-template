@@ -11,10 +11,10 @@ addons:
      - llvm-toolchain-trusty-5.0
 
 compiler:
-  - clang-4.0
-  - clang-5.0
-  - gcc-6
-  - gcc-7
+  - clang++-4.0
+  - clang++-5.0
+  - g++-6
+  - g++-7
 
 env:
   - BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE STATIC_ANALYSIS=TRUE BUILD_TYPE=Debug
@@ -74,7 +74,9 @@ install:
     fi
   - cmake --version
   # Install the right version of libc++ and libc++abi
-  - echo ${compiler}
+  - echo ${CXX}
+  - ${CXX} --version
+  - echo ${}
   - |
     if [[ "${CXX%%+*}" == "clang" ]]; then
       if   [[ "${CXX}" == "clang++-4.0" ]]; then LLVM_VERSION="4.0.1";
