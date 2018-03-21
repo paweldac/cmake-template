@@ -1,13 +1,25 @@
+dist: trusty 
 sudo: false
 language: cpp
+os: linux
 
 addons:
   apt:
-    packages:
-      - valgrind
-      - g++-6
     sources:
      - ubuntu-toolchain-r-test
+     - llvm-toolchain-trusty-4.0
+     - llvm-toolchain-trusty-5.0
+
+compiler:
+  - clang-4.0
+  - clang-5.0
+  - gcc-6
+  - gcc-7
+
+env:
+  - BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE STATIC_ANALYSIS=TRUE BUILD_TYPE=Debug
+  - BOOST_VERSION=1.66.0 CHECK_FORMATTING=TRUE
+  - BOOST_VERSION=1.66.0 BUILD_TESTS=FALSE BUILD_TYPE=Release
 
 cache:
   directories:
@@ -18,29 +30,29 @@ cache:
     - ${TRAVIS_BUILD_DIR}/cmake
     - ${TRAVIS_BUILD_DIR}/cppcheck
 
-matrix:
-  include:
-    - os: linux
-      env: LLVM_VERSION=3.9.0 BOOST_VERSION=1.66.0 CHECK_FORMATTING=TRUE
-      compiler: clang
-    - os: linux
-      env: LLVM_VERSION=3.9.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Release
-      compiler: clang
-    - os: linux
-      env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
-      compiler: clang
-    - os: linux
-      env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Release
-      compiler: clang
-    - os: linux
-      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
-      compiler: gcc
-    - os: linux
-      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE STATIC_ANALYSIS=TRUE BUILD_TYPE=Debug
-      compiler: gcc
-    - os: linux
-      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TETS=TRUE BUILD_TYPE=Release
-      compiler: gcc
+#matrix:
+#  include:
+#    - os: linux
+#      env: LLVM_VERSION=3.9.0 BOOST_VERSION=1.66.0 CHECK_FORMATTING=TRUE
+#      compiler: clang
+#    - os: linux
+#      env: LLVM_VERSION=3.9.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Release
+#      compiler: clang
+#    - os: linux
+#      env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
+#      compiler: clang
+#    - os: linux
+#      env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Release
+#      compiler: clang
+#    - os: linux
+#      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
+#      compiler: gcc
+#    - os: linux
+#      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE STATIC_ANALYSIS=TRUE BUILD_TYPE=Debug
+#      compiler: gcc
+#    - os: linux
+#      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TETS=TRUE BUILD_TYPE=Release
+#      compiler: gcc
 git:
   submodules: false
 
@@ -117,6 +129,7 @@ script:
       cd ..
       git diff-index --quiet HEAD -- || exit 1;
       cd ${TRAVIS_BUILD_DIR}
+      exit 0
     fi
   - |
     if [[ "${STATIC_ANALYSIS}" == "true" ]]; then
