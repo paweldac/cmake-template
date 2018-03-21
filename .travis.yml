@@ -76,7 +76,7 @@ install:
   # Install the right version of libc++ and libc++abi
   - echo ${CXX}
   - ${CXX} --version
-  - echo ${}
+  - echo ${COMPILER}
   - |
     if [[ "${CXX%%+*}" == "clang" ]]; then
       if   [[ "${CXX}" == "clang++-4.0" ]]; then LLVM_VERSION="4.0.1";
