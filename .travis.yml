@@ -74,7 +74,7 @@ install:
     fi
   - cmake --version
   # Install the right version of libc++ and libc++abi
-  - echo ${CXX}
+  - echo ${compiler}
   - |
     if [[ "${CXX%%+*}" == "clang" ]]; then
       if   [[ "${CXX}" == "clang++-4.0" ]]; then LLVM_VERSION="4.0.1";
