@@ -26,7 +26,7 @@ cache:
     - ${TRAVIS_BUILD_DIR}/llvm/llvm-4.0.1
     - ${TRAVIS_BUILD_DIR}/llvm/llvm-5.0.1
     - ${TRAVIS_BUILD_DIR}/boost/boost-1.66.0
-    - ${TRAVIS_BUILD_DIR}/cmake
+    - ${TRAVIS_BUILD_DIR}/cmake/cmake-3.10.3
     - ${TRAVIS_BUILD_DIR}/cppcheck
 
 #matrix:
@@ -60,14 +60,17 @@ before_install:
 
 install:
   # Set env variables
+  - CMAKE_MAJOR_VERSION=3.10
+  - CMAKE_MINOR_VERSION=3
 #  - if [[ -n "${LLVM_VERSION}" ]]; then export TOOLSET=clang; fi
 #  - if [[ -n "${GCC_VERSION}" ]]; then export TOOLSET=gcc CXX=g++-${GCC_VERSION}; fi
   # Install CMake
+  - CMAKE_ROOT=${TRAVIS_BUILD_DIR}/cmake/${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}
   - |
-    if [[ -z "$(ls -A ${TRAVIS_BUILD_DIR}/cmake/bin)" ]]; then
-      CMAKE_URL="https://cmake.org/files/v3.10/cmake-3.10.3-Linux-x86_64.tar.gz"
-      mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz -C cmake
-      export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+    if [[ -z "$(ls -A ${CMAKE_ROOT}/bin)" ]]; then
+      CMAKE_URL="https://cmake.org/files/v${CMAKE_MAJOR_VERSION}/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}-Linux-x86_64.tar.gz"
+      mkdir -p ${CMAKE_ROOT} && travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz -C cmake/${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}
+      export PATH=${CMAKE_ROOT}/bin:${PATH}
     fi
   - cmake --version
   # Install the right version of libc++ and libc++abi
