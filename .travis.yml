@@ -46,6 +46,7 @@ before_install:
   - git submodule update --init --recursive
 
 install:
+  - export CXX=${COMPILER}
   - ${CXX} --version
   # Set env variables
   - CMAKE_MAJOR_VERSION=3.10
@@ -89,6 +90,7 @@ install:
   - ${CXX} --version
   # Install Boost
   - echo ${BOOST_VERSION}
+  - echo ${TOOLSET}
   - |
     if [[ "${BOOST_VERSION}" != "" ]]; then
       BOOST_DIR=${TRAVIS_BUILD_DIR}/boost/boost-${BOOST_VERSION}
@@ -118,7 +120,7 @@ before_script:
   - cd ${TRAVIS_BUILD_DIR}
   - mkdir build
   - cd build
-  - cmake -DCMAKE_CXX_COMPILER="$CXX" -DCMAKE_C_COMPILER="$CC" -DBUILD_TYPE="$BUILD_TYPE" -DBOOST_ROOT=${BOOST_DIR} ..
+  - cmake -DBUILD_TYPE="$BUILD_TYPE" -DBOOST_ROOT=${BOOST_DIR} ..
 
 script:
   - |
