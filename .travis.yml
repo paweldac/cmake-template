@@ -46,13 +46,23 @@ before_install:
   - git submodule update --init --recursive
 
 install:
-  - export CXX=${COMPILER}
-  - ${CXX} --version
   # Set env variables
+  - export CXX=${COMPILER}
+  - export CC=${COMPILER}
+  - ${CXX} --version
+  - ${CC} --version
   - CMAKE_MAJOR_VERSION=3.10
   - CMAKE_MINOR_VERSION=3
-  - if [[ -n "${LLVM_VERSION}" ]]; then export TOOLSET=clang; fi
+  - |
+    if [[ -n "${LLVM_VERSION}" ]]; then export TOOLSET=clang; fi
   - if [[ -n "${GCC_VERSION}" ]]; then export TOOLSET=gcc; fi
+  - |
+    if [[ "${CXX%%+*}" == "clang" ]]; then
+      export TOOLSET=clang
+    elif
+      export TOOLSET=gcc
+    fi
+  - echo ${TOOLSET}
   # Install CMake
   - CMAKE_ROOT=${TRAVIS_BUILD_DIR}/cmake/${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}
   - |
@@ -87,10 +97,7 @@ install:
       export LDFLAGS="-L ${LLVM_ROOT}/install/lib -l c++ -l c++abi"
       export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${LLVM_ROOT}/install/lib"
     fi
-  - ${CXX} --version
   # Install Boost
-  - echo ${BOOST_VERSION}
-  - echo ${TOOLSET}
   - |
     if [[ "${BOOST_VERSION}" != "" ]]; then
       BOOST_DIR=${TRAVIS_BUILD_DIR}/boost/boost-${BOOST_VERSION}
