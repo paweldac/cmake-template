@@ -53,10 +53,13 @@ install:
   - CMAKE_MINOR_VERSION=3
   - |
     if [[ "${CXX%%+*}" == "clang" ]]; then
+      export BOOST_ADDITONAL_OPTIONS="cxxflags="-stdlib=libc++" linkflags="-stdlib=libc++""
       export TOOLSET=clang
     else
+      export BOOST_ADDITONAL_OPTIONS=""
       export TOOLSET=gcc
     fi
+  - echo ${BOOST_ADDITONAL_OPTIONS}
   - echo ${TOOLSET}
   # Install CMake
   - CMAKE_ROOT=${TRAVIS_BUILD_DIR}/cmake/${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}
@@ -102,8 +105,7 @@ install:
         { travis_retry wget --quiet -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
         (cd ${BOOST_DIR}/tools/build && ./bootstrap.sh --with-toolset=${TOOLSET} && ./b2 install --prefix=${TRAVIS_BUILD_DIR}/boost/b2 toolset=${TOOLSET})
         export PATH=${TRAVIS_BUILD_DIR}/boost/b2/bin:${PATH}
-        b2 --version
-        (cd ${BOOST_DIR} && b2 --build-dir=${BOOST_DIR} toolset=${TOOLSET} stage)
+        (cd ${BOOST_DIR} && b2 --build-dir=${BOOST_DIR} toolset=${TOOLSET} ${BOOST_ADDITONAL_OPTIONS} stage)
       fi
     fi
   #Intall cppcheck
