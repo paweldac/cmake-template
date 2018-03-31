@@ -67,8 +67,8 @@ install:
     if [[ -z "$(ls -A ${CMAKE_ROOT}/bin)" ]]; then
       CMAKE_URL="https://cmake.org/files/v${CMAKE_MAJOR_VERSION}/cmake-${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}-Linux-x86_64.tar.gz"
       mkdir -p ${CMAKE_ROOT} && travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz -C cmake/${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}
-      export PATH=${CMAKE_ROOT}/bin:${PATH}
     fi
+  - export PATH=${CMAKE_ROOT}/bin:${PATH}
   - cmake --version
   # Install the right version of libc++ and libc++abi
   - |
