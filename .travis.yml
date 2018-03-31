@@ -56,7 +56,7 @@ install:
   - |
     if [[ "${CXX%%+*}" == "clang" ]]; then
       export TOOLSET=clang
-    elif
+    else
       export TOOLSET=gcc
     fi
   - echo ${TOOLSET}
