@@ -5,8 +5,8 @@ os: linux
 
 cache:
   directories:
-    - ${TRAVIS_BUILD_DIR}/llvm/llvm-4.0.1
-    - ${TRAVIS_BUILD_DIR}/llvm/llvm-5.0.1
+#    - ${TRAVIS_BUILD_DIR}/llvm/llvm-4.0.1
+#    - ${TRAVIS_BUILD_DIR}/llvm/llvm-5.0.1
 #    - ${TRAVIS_BUILD_DIR}/boost/boost-1.66.0
     - ${TRAVIS_BUILD_DIR}/cmake/cmake-3.10.3
     - ${TRAVIS_BUILD_DIR}/cppcheck
@@ -78,19 +78,20 @@ install:
       fi
 
       LLVM_ROOT="${TRAVIS_BUILD_DIR}/llvm/llvm-${LLVM_VERSION}"
-      LLVM_URL="http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.xz"
-      LIBCXX_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxx-${LLVM_VERSION}.src.tar.xz"
-      LIBCXXABI_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxxabi-${LLVM_VERSION}.src.tar.xz"
+      if [[ -z "$(ls -A ${LLVM_ROOT})" ]]; then
+        LLVM_URL="http://llvm.org/releases/${LLVM_VERSION}/llvm-${LLVM_VERSION}.src.tar.xz"
+        LIBCXX_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxx-${LLVM_VERSION}.src.tar.xz"
+        LIBCXXABI_URL="http://llvm.org/releases/${LLVM_VERSION}/libcxxabi-${LLVM_VERSION}.src.tar.xz"
 
-      mkdir -p ${LLVM_ROOT} ${LLVM_ROOT}/build ${LLVM_ROOT}/projects/libcxx ${LLVM_ROOT}/projects/libcxxabi ${LLVM_ROOT}/clang
-      travis_retry wget --quiet -O - ${LLVM_URL}      | tar --strip-components=1 -xJ -C ${LLVM_ROOT} || exit 1
-      travis_retry wget --quiet -O - ${LIBCXX_URL}    | tar --strip-components=1 -xJ -C ${LLVM_ROOT}/projects/libcxx || exit 1
-      travis_retry wget --quiet -O - ${LIBCXXABI_URL} | tar --strip-components=1 -xJ -C ${LLVM_ROOT}/projects/libcxxabi || exit 1
+        mkdir -p ${LLVM_ROOT} ${LLVM_ROOT}/build ${LLVM_ROOT}/projects/libcxx ${LLVM_ROOT}/projects/libcxxabi ${LLVM_ROOT}/clang
+        travis_retry wget --quiet -O - ${LLVM_URL}      | tar --strip-components=1 -xJ -C ${LLVM_ROOT} || exit 1
+        travis_retry wget --quiet -O - ${LIBCXX_URL}    | tar --strip-components=1 -xJ -C ${LLVM_ROOT}/projects/libcxx || exit 1
+        travis_retry wget --quiet -O - ${LIBCXXABI_URL} | tar --strip-components=1 -xJ -C ${LLVM_ROOT}/projects/libcxxabi || exit 1
 
-      (cd ${LLVM_ROOT}/build && cmake .. -DCMAKE_INSTALL_PREFIX=${LLVM_ROOT}/install) || exit 1
-      (cd ${LLVM_ROOT}/build/projects/libcxx && make install -j2) || exit 1
-      (cd ${LLVM_ROOT}/build/projects/libcxxabi && make install -j2) || exit 1
-
+        (cd ${LLVM_ROOT}/build && cmake .. -DCMAKE_INSTALL_PREFIX=${LLVM_ROOT}/install) || exit 1
+        (cd ${LLVM_ROOT}/build/projects/libcxx && make install -j2) || exit 1
+        (cd ${LLVM_ROOT}/build/projects/libcxxabi && make install -j2) || exit 1
+      fi
       export CXXFLAGS="-isystem ${LLVM_ROOT}/install/include/c++/v1"
       export LDFLAGS="-L ${LLVM_ROOT}/install/lib -l c++ -l c++abi"
       export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${LLVM_ROOT}/install/lib"
@@ -98,7 +99,7 @@ install:
   # Install Boost
   - |
     if [[ "${BOOST_VERSION}" != "" ]]; then
-      BOOST_DIR=${TRAVIS_BUILD_DIR}/boost/boost-${BOOST_VERSION}
+      BOOST_DIR=${TRAVIS_BUILD_DIR}/boost/${COMPILER}/boost-${BOOST_VERSION}
       if [[ -z "$(ls -A ${BOOST_DIR})" ]]; then
         BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
         mkdir -p ${BOOST_DIR}
@@ -117,7 +118,7 @@ install:
       mkdir -p bin
       mv cppcheck bin/
     fi
-    export PATH="${TRAVIS_BUILD_DIR}/cppcheck/bin:${PATH}"
+  - export PATH="${TRAVIS_BUILD_DIR}/cppcheck/bin:${PATH}"
   - cppcheck --version
 
 before_script:
