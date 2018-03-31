@@ -100,7 +100,7 @@ install:
         BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
         mkdir -p ${BOOST_DIR}
         { travis_retry wget --quiet -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
-        (cd ${BOOST_DIR}/tools/build && ./bootstrap.sh --with-toolset=${TOOLSET} && ./b2 install --prefix=${TRAVIS_BUILD_DIR}/boost/b2)
+        (cd ${BOOST_DIR}/tools/build && ./bootstrap.sh --with-toolset=${TOOLSET} && ./b2 install --prefix=${TRAVIS_BUILD_DIR}/boost/b2 toolset=${TOOLSET})
         export PATH=${TRAVIS_BUILD_DIR}/boost/b2/bin:${PATH}
         b2 --version
         (cd ${BOOST_DIR} && b2 --build-dir=${BOOST_DIR} toolset=${TOOLSET} stage)
