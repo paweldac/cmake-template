@@ -9,7 +9,7 @@ cache:
 #    - ${TRAVIS_BUILD_DIR}/llvm/llvm-5.0.1
 #    - ${TRAVIS_BUILD_DIR}/boost/boost-1.66.0
     - ${TRAVIS_BUILD_DIR}/cmake/cmake-3.10.3
-    - ${TRAVIS_BUILD_DIR}/cppcheck
+#    - ${TRAVIS_BUILD_DIR}/cppcheck
 
 matrix:
   include:
