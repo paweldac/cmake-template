@@ -54,9 +54,6 @@ install:
   - CMAKE_MAJOR_VERSION=3.10
   - CMAKE_MINOR_VERSION=3
   - |
-    if [[ -n "${LLVM_VERSION}" ]]; then export TOOLSET=clang; fi
-  - if [[ -n "${GCC_VERSION}" ]]; then export TOOLSET=gcc; fi
-  - |
     if [[ "${CXX%%+*}" == "clang" ]]; then
       export TOOLSET=clang
     elif
