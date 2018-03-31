@@ -48,9 +48,7 @@ before_install:
 install:
   # Set env variables
   - export CXX=${COMPILER}
-  - export CC=${COMPILER}
   - ${CXX} --version
-  - ${CC} --version
   - CMAKE_MAJOR_VERSION=3.10
   - CMAKE_MINOR_VERSION=3
   - |
