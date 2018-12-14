@@ -11,8 +11,8 @@ addons:
 
 cache:
   directories:
-    - ${TRAVIS_BUILD_DIR}/llvm/llvm-3.9.0
-    - ${TRAVIS_BUILD_DIR}/llvm/llvm-4.0.0
+    - ${TRAVIS_BUILD_DIR}/llvm/llvm-7.0.0
+    - ${TRAVIS_BUILD_DIR}/llvm/llvm-6.0.1
     - ${TRAVIS_BUILD_DIR}/boost/boost-1.61.0
     - ${TRAVIS_BUILD_DIR}/boost/boost-1.66.0
     - ${TRAVIS_BUILD_DIR}/cmake
@@ -21,16 +21,16 @@ cache:
 matrix:
   include:
     - os: linux
-      env: LLVM_VERSION=3.9.0 BOOST_VERSION=1.66.0 CHECK_FORMATTING=TRUE
+      env: LLVM_VERSION=6.0.1 BOOST_VERSION=1.66.0 CHECK_FORMATTING=TRUE
       compiler: clang
     - os: linux
-      env: LLVM_VERSION=3.9.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Release
+      env: LLVM_VERSION=6.0.1 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Release
       compiler: clang
     - os: linux
-      env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
+      env: LLVM_VERSION=7.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
       compiler: clang
     - os: linux
-      env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=FALSE BUILD_TYPE=Release
+      env: LLVM_VERSION=7.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=FALSE BUILD_TYPE=Release
       compiler: clang
     - os: linux
       env: GCC_VERSION=7 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
