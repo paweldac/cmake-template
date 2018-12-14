@@ -25,17 +25,25 @@ matrix:
       env: LLVM_VERSION=4.0.0 BOOST_VERSION=1.66.0 BUILD_TESTS=FALSE BUILD_TYPE=Release
       compiler: clang
     - os: linux
-      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
-      addons: { apt: { packages: [g++-6], sources: ["ubuntu-toolchain-r-test"] } }
-      compiler: gcc
+      env: GCC_VERSION=7 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
+      addons: { apt: { packages: [g++-7], sources: ["ubuntu-toolchain-r-test"] } }
+      compiler: g++
     - os: linux
-      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE STATIC_ANALYSIS=TRUE BUILD_TYPE=Debug
-      addons: { apt: { packages: [g++-6], sources: ["ubuntu-toolchain-r-test"] } }
-      compiler: gcc
+      env: GCC_VERSION=7 BOOST_VERSION=1.66.0 BUILD_TETS=FALSE BUILD_TYPE=Release
+      addons: { apt: { packages: [g++-7], sources: ["ubuntu-toolchain-r-test"] } }
+      compiler: g++
     - os: linux
-      env: GCC_VERSION=6 BOOST_VERSION=1.66.0 BUILD_TETS=FALSE BUILD_TYPE=Release
-      addons: { apt: { packages: [g++-6], sources: ["ubuntu-toolchain-r-test"] } }
-      compiler: gcc
+      env: GCC_VERSION=8 BOOST_VERSION=1.66.0 BUILD_TESTS=TRUE BUILD_TYPE=Debug
+      addons: { apt: { packages: [g++-8], sources: ["ubuntu-toolchain-r-test"] } }
+      compiler: g++
+    - os: linux
+      env: GCC_VERSION=8 BOOST_VERSION=1.66.0 BUILD_TESTS=FALSE STATIC_ANALYSIS=TRUE BUILD_TYPE=Debug
+      addons: { apt: { packages: [g++-8], sources: ["ubuntu-toolchain-r-test"] } }
+      compiler: g++
+    - os: linux
+      env: GCC_VERSION=8 BOOST_VERSION=1.66.0 BUILD_TETS=FALSE BUILD_TYPE=Release
+      addons: { apt: { packages: [g++-8], sources: ["ubuntu-toolchain-r-test"] } }
+      compiler: g++
 git:
   submodules: false
 
