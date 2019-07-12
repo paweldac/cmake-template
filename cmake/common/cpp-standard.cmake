@@ -1,25 +1,33 @@
 include_guard()
 
+set(CPP_98_STR "C++98")
+set(CPP_11_STR "C++11")
+set(CPP_14_STR "C++14")
+set(CPP_17_STR "C++17")
+set(CPP_20_STR "C++20")
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CPP_STANDARD "C++14" CACHE STRING
-    "C++ standard, choose from C++98, C++11, C++14 and C++17." FORCE
+set(CPP_STANDARD "${CPP_17_STR}" CACHE STRING
+    "C++ standard, choose from ${CPP_98_STR}, ${CPP_11_STR}, ${CPP_14_STR}, ${CPP_17_STR} and ${CPP_20_STR}" FORCE
 )
 set_property(CACHE CPP_STANDARD PROPERTY STRINGS
-    "C++98" "C++11" "C++14" "C++17"
+    ${CPP_98_STR} ${CPP_11_STR} ${CPP_14_STR} ${CPP_17_STR} ${CPP_20_STR}
 )
 
-if(CPP_STANDARD STREQUAL "C++98")
+if(CPP_STANDARD STREQUAL ${CPP_98_STR})
     set(CMAKE_CXX_STANDARD 98)
-elseif(CPP_STANDARD STREQUAL "C++11")
+elseif(CPP_STANDARD STREQUAL ${CPP_11_STR})
     set(CMAKE_CXX_STANDARD 11)
-elseif(CPP_STANDARD STREQUAL "C++14")
+elseif(CPP_STANDARD STREQUAL ${CPP_14_STR})
     set(CMAKE_CXX_STANDARD 14)
-elseif(CPP_STANDARD STREQUAL "C++17")
+elseif(CPP_STANDARD STREQUAL ${CPP_17_STR})
     set(CMAKE_CXX_STANDARD 17)
+elseif(CPP_STANDARD STREQUAL ${CPP_20_STR})
+    set(CMAKE_CXX_STANDARD 20)
 else()
-    message(FATAL_ERROR "Wrong C++ Standard. Choose from C++98, C++11, C++14 and C++17")
+    message(FATAL_ERROR "Wrong C++ Standard. Choose from ${CPP_98_STR}, ${CPP_11_STR}, ${CPP_14_STR}, ${CPP_17_STR} and ${CPP_20_STR}")
 endif()
 
 message(STATUS "C++ standard is set to: ${CPP_STANDARD}")
