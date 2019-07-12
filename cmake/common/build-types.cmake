@@ -1,9 +1,4 @@
-##### pragma once #####
-if(BUILD_TYPES_INCLUDED)
-    return()
-endif()
-set(BUILD_TYPES_INCLUDED true)
-#######################
+include_guard()
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING

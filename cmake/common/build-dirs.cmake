@@ -1,9 +1,4 @@
-##### pragma once #####
-if(COMMON_BUILD_DIRS_INCLUDED)
-    return()
-endif()
-set(COMMON_BUILD_DIRS_INCLUDED true)
-#######################
+include_guard()
 
 if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/arc)

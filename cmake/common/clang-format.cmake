@@ -1,9 +1,4 @@
-##### pragma once #####
-if(CLANG_FORMAT_INCLUDED)
-    return()
-endif()
-set(CLANG_FORMAT_INCLUDED true)
-#######################
+include_guard()
 
 add_custom_target(
     format
