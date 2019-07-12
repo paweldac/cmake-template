@@ -1,9 +1,4 @@
-##### pragma once #####
-if(CPP_STANDARD_INCLUDED)
-    return()
-endif()
-set(CPP_STANDARD_INCLUDED true)
-#######################
+include_guard()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
