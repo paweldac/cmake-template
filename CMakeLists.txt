@@ -20,4 +20,9 @@ if(Boost_FOUND)
 endif()
 
 add_subdirectory(src)
-add_subdirectory(tests)
+
+include(CTest)
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

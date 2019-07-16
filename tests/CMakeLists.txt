@@ -1,25 +1,16 @@
-include(ExternalProject)
+include_guard()
 
-ExternalProject_Add(
-    googletest
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tools/googletest/googletest
-    INSTALL_COMMAND ""
-)
-ExternalProject_Get_Property(googletest source_dir)
-set(GTEST_INCLUDE_DIRS ${source_dir}/include)
-ExternalProject_Get_Property(googletest binary_dir)
-set(GTEST_LIBDIR ${binary_dir})
-set(GTEST_LIBRARIES gtest gtest_main)
+find_package(GTest CONFIG REQUIRED)
+include(GoogleTest)
 
-ExternalProject_Add(
-    googlemock
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tools/googletest/googlemock
-    INSTALL_COMMAND ""
-)
-ExternalProject_Get_Property(googlemock source_dir)
-set(GMOCK_INCLUDE_DIRS ${source_dir}/include)
-ExternalProject_Get_Property(googlemock binary_dir)
-set(GMOCK_LIBDIR ${binary_dir})
-set(GMOCK_LIBRARIES gmock gmock_main)
+function(add_test_executable TEST_NAME)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs SOURCES DEPENDS)
+    cmake_parse_arguments(ARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    add_executable(${TEST_NAME} "${ARGS_SOURCES}")
+    target_link_libraries(${TEST_NAME} PRIVATE "${ARGS_DEPENDS}")
+    gtest_discover_tests(${TEST_NAME})
+endfunction()
 
 add_subdirectory(ut)
