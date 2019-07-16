@@ -29,7 +29,7 @@ matrix:
       addons: { apt: { packages: [g++-7], sources: ["ubuntu-toolchain-r-test"] } }
       compiler: g++
     - os: linux
-      env: GCC_VERSION=7 BOOST_VERSION=1.66.0 BUILD_TETS=FALSE BUILD_TYPE=Release
+      env: GCC_VERSION=7 BOOST_VERSION=1.66.0 BUILD_TESTS=FALSE BUILD_TYPE=Release
       addons: { apt: { packages: [g++-7], sources: ["ubuntu-toolchain-r-test"] } }
       compiler: g++
     - os: linux
@@ -41,7 +41,7 @@ matrix:
       addons: { apt: { packages: [g++-8], sources: ["ubuntu-toolchain-r-test"] } }
       compiler: g++
     - os: linux
-      env: GCC_VERSION=8 BOOST_VERSION=1.66.0 BUILD_TETS=FALSE BUILD_TYPE=Release
+      env: GCC_VERSION=8 BOOST_VERSION=1.66.0 BUILD_TESTS=FALSE BUILD_TYPE=Release
       addons: { apt: { packages: [g++-8], sources: ["ubuntu-toolchain-r-test"] } }
       compiler: g++
 git:
@@ -132,10 +132,10 @@ script:
   - |
     if [[ "${BUILD_TESTS}" == "true" ]]; then
       cd build
-      cmake -DCMAKE_CXX_COMPILER="$CXX" -DCMAKE_C_COMPILER="$CC" -DBUILD_TYPE="$BUILD_TYPE" -DBOOST_ROOT=${BOOST_DIR} ..
+      cmake -DCMAKE_CXX_COMPILER="$CXX" -DCMAKE_C_COMPILER="$CC" -DBUILD_TESTING=ON -DBUILD_TYPE="$BUILD_TYPE" -DBOOST_ROOT=${BOOST_DIR} ..
       make cmake-template.ut
       cd ${TRAVIS_BUILD_DIR}
     fi
   - cd build
-  - cmake -DCMAKE_CXX_COMPILER="$CXX" -DCMAKE_C_COMPILER="$CC" -DBUILD_TYPE="$BUILD_TYPE" -DBOOST_ROOT=${BOOST_DIR} ..
+  - cmake -DCMAKE_CXX_COMPILER="$CXX" -DCMAKE_C_COMPILER="$CC" -DBUILD_TESTING=OFF -DBUILD_TYPE="$BUILD_TYPE" -DBOOST_ROOT=${BOOST_DIR} ..
   - make cmake-template.app
