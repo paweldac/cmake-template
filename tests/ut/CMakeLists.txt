@@ -1,25 +1,10 @@
-set(UT_BIN ${PROJECT_NAME}.ut)
+include_guard()
 
-include_directories(
-    ${GMOCK_INCLUDE_DIRS}
-    ${GTEST_INCLUDE_DIRS}
+add_test_executable(${PROJECT_NAME}.ut
+    SOURCES
+        ut.cpp
+     DEPENDS
+        GTest::gtest
+        GTest::gtest_main
+        GTest::gmock
 )
-
-link_directories(
-    ${GMOCK_LIBDIR}
-    ${GTEST_LIBDIR}
-)
-
-add_executable(
-    ${UT_BIN}
-    ut.cpp
-)
-
-target_link_libraries(
-    ${UT_BIN}
-    ${GMOCK_LIBRARIES}
-    ${GTEST_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
-
-add_dependencies(${UT_BIN} googlemock googletest)
