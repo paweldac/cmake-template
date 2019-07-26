@@ -7,4 +7,6 @@ add_test_executable(${PROJECT_NAME}.ut
         GTest::gtest
         GTest::gtest_main
         GTest::gmock
+     META_TARGETS
+        ${PROJECT_NAME}.tests
 )
