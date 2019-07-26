@@ -124,7 +124,7 @@ script:
   - |
     cd build
     if [[ "${BUILD_TESTS}" == "true" ]]; then
-      make cmake-template.ut
-      ctest --schedule-random .
+      make cmake-template.tests_build -j${PARALLEL_BUILD_JOBS}
+      ctest --schedule-random --output-on-failure --parallel ${PARALLEL_BUILD_JOBS} .
     fi
-  - make cmake-template.app
+  - make cmake-template.app -j${PARALLEL_BUILD_JOBS}
