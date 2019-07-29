@@ -29,7 +29,7 @@ TEST_F(BoostBasedPrimesCalculatorTests, WhenRequestedPrimeWithPrimeIndexGraterTh
 TEST_F(BoostBasedPrimesCalculatorTests, shouldReturnNthPrimeNumber)
 {
   auto sampleTestDataSize = first_10000_primes.size();
-  for(int indexFromZero = 0, index = 1; indexFromZero < sampleTestDataSize; indexFromZero++, index++)
+  for(std::size_t indexFromZero = 0, index = 1; indexFromZero < sampleTestDataSize; indexFromZero++, index++)
   {
     EXPECT_EQ(sut.getPrime(index), first_10000_primes[indexFromZero]);
   }
