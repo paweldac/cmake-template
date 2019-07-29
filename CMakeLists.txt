@@ -11,7 +11,7 @@ include(clang-format)
 include(cpp-standard)
 
 find_package(Threads REQUIRED)
-find_package(Boost 1.66.0 COMPONENTS system REQUIRED)
+find_package(Boost 1.70.0 COMPONENTS system REQUIRED)
 if(Boost_FOUND)
     message("BOOST_ROOT: ${BOOST_ROOT}")
     message("BOOSTROOT: ${BOOSTROOT}")
