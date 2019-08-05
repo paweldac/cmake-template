@@ -11,7 +11,7 @@ namespace primes {
     class IPrimesCalculatorFactory {
     public:
         virtual ~IPrimesCalculatorFactory() = default;
-        virtual std::unique_ptr<PrimesCalculator> create() = 0;
+        virtual std::unique_ptr<PrimesCalculator> create() const = 0;
     };
 }
 

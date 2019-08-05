@@ -8,7 +8,7 @@ namespace primes {
     public:
         using Index = unsigned;
         virtual ~PrimesCalculator() = default;
-        virtual unsigned getPrime(Index) = 0;
+        virtual unsigned getPrime(Index) const = 0;
     };
 }
 
