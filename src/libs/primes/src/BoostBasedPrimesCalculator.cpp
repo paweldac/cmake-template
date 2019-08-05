@@ -3,6 +3,7 @@
 #include <boost/math/special_functions/prime.hpp>
 #include <boost/throw_exception.hpp>
 #include <stdexcept>
+#include <string>
 
 namespace {
   auto is_positive_integer(int n)
