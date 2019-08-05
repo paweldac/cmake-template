@@ -2,7 +2,7 @@
 #include <memory>
 #include "primes/PrimesCalculatorFactory.hpp"
 #include "primes/PrimesCalculator.hpp"
-#include "PrimesAccumulator.hpp"
+#include "PrimesAccumulator/PrimesAccumulator.hpp"
 
 std::unique_ptr<primes::IPrimesCalculatorFactory> createPrimesCalculatorFactory()
 {
