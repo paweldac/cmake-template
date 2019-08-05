@@ -2,6 +2,7 @@
 #include <memory>
 #include "primes/PrimesCalculatorFactory.hpp"
 #include "primes/PrimesCalculator.hpp"
+#include "PrimesAccumulator.hpp"
 
 std::unique_ptr<primes::IPrimesCalculatorFactory> createPrimesCalculatorFactory()
 {
@@ -16,5 +17,6 @@ int main()
 	for(int i=1; i<10; i++) {
       std::cout << i << ": " << primesCalculator->getPrime(i) << std::endl;
     }
+    std::cout << "Sum of first 5 primes: " << adder::PrimesAccumulator{*primesCalculator}.sumNthPrimes(5) << std::endl;
     return 0;
 }

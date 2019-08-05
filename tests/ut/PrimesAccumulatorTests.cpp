@@ -1,0 +1,31 @@
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+#include "mocks/PrimesCalculatorMock.hpp"
+#include "PrimesAccumulator.hpp"
+
+using namespace testing;
+
+struct PrimesAccumulatorTests : Test {
+  StrictMock<mocks::PrimesCalculatorMock> primesCalculatorMock;
+  adder::PrimesAccumulator sut{primesCalculatorMock};
+};
+
+TEST_F(PrimesAccumulatorTests, WhenPassedNegativeValueAsFirstNthPrimes_ShouldThrowInvalidArgument)
+{
+  EXPECT_THROW(sut.sumNthPrimes(-1), std::invalid_argument);
+}
+
+TEST_F(PrimesAccumulatorTests, WhenPassedZeroPrimesToSum_ResultShouldBeZero)
+{
+  EXPECT_EQ(sut.sumNthPrimes(0), 0);
+}
+
+TEST_F(PrimesAccumulatorTests, WhenPassedNthPrimes_PrimesShouldBeTakenPrimesCalculatorAndAccumulated)
+{
+  const auto firstPrime = 1u;
+  const auto secondPrime = 2u;
+  EXPECT_CALL(primesCalculatorMock, getPrime(1)).WillOnce(Return(firstPrime));
+  EXPECT_CALL(primesCalculatorMock, getPrime(2)).WillOnce(Return(secondPrime));
+  EXPECT_EQ(sut.sumNthPrimes(2), firstPrime + secondPrime);
+}
