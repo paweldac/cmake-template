@@ -6,7 +6,7 @@
 namespace primes {
     class PrimesCalculator {
     public:
-        using Index = unsigned;
+        using Index = int;
         virtual ~PrimesCalculator() = default;
         virtual unsigned getPrime(Index) const = 0;
     };
