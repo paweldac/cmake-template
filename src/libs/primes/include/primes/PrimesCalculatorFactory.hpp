@@ -9,7 +9,7 @@ namespace primes {
 class PrimesCalculator;
     class PrimesCalculatorFactory : public IPrimesCalculatorFactory {
     public:
-        std::unique_ptr<PrimesCalculator> create() override;
+        std::unique_ptr<PrimesCalculator> create()  const override;
     };
 }
 

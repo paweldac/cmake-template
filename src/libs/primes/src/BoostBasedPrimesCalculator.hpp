@@ -8,7 +8,7 @@
 namespace primes {
     class BoostBasedPrimesCalculator : public PrimesCalculator {
     public:
-        unsigned getPrime(PrimesCalculator::Index) override;
+        unsigned getPrime(PrimesCalculator::Index) const override;
     };
 }
 

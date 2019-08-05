@@ -16,7 +16,7 @@ namespace {
 }
 
 namespace primes {
-    unsigned BoostBasedPrimesCalculator::getPrime(PrimesCalculator::Index n) {
+    unsigned BoostBasedPrimesCalculator::getPrime(PrimesCalculator::Index n) const {
         unsigned indexFromZero = n-1;
         if(not is_positive_integer(n) or indexFromZero >= boost::math::max_prime)
         {
