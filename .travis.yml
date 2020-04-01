@@ -8,7 +8,7 @@ cache:
     - ${HOME}/deps/boost/g++-8/boost-1.70.0
     - ${HOME}/deps/boost/clang++-8/boost-1.70.0
     - ${HOME}/deps/llvm-8.0.0
-    - ${HOME}/deps/cmake-3.14.5
+    - ${HOME}/deps/cmake-3.17.0
     - ${HOME}/deps/googletest/googletest-b77e5c7
 
 matrix:
@@ -48,8 +48,8 @@ install:
     fi
   - export PATH=${HOME}/.local/bin:${PATH}
   # Install CMake
-  - CMAKE_MAJOR_VERSION=3.14
-  - CMAKE_MINOR_VERSION=5
+  - CMAKE_MAJOR_VERSION=3.17
+  - CMAKE_MINOR_VERSION=0
   - CMAKE_VERSION="${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}"
   - |
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
