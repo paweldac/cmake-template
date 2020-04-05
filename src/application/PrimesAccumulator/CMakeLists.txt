@@ -11,7 +11,7 @@ add_library(${module_name} ${sources})
 target_link_libraries(${module_name}
     PRIVATE
         Primes::primes
-        Boost::boost
+        Boost::headers
 )
 
 target_include_directories(${module_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

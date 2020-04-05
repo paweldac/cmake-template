@@ -4,27 +4,32 @@
 #include <boost/throw_exception.hpp>
 #include <stdexcept>
 #include <string>
+#include <sstream>
 
 namespace {
-  auto is_positive_integer(int n)
+  static constexpr primes::PrimesCalculator::Index minIndex = 1;
+  static constexpr primes::PrimesCalculator::Index maxIndex = 10000;
+  auto is_index_in_allowed_range(primes::PrimesCalculator::Index n)
   {
-    return n >= 1;
+    return n >= minIndex && n <= maxIndex;
   }
 
-  auto createRangeError(int actual)
+  auto createIndexNotInRangeExplanation(primes::PrimesCalculator::Index actual)
   {
-    return std::string{"Prime series index must be positive integer in range [1, 10000]. Got: "} + std::to_string(actual);
+    std::stringstream ss;
+    ss << "PrimesCalculator::Index index must be in range [" << minIndex
+       << ", " << maxIndex << "]. Value passed: " << actual << ".";
+    return ss.str();
   }
 }
 
 namespace primes {
-
     unsigned BoostBasedPrimesCalculator::getPrime(PrimesCalculator::Index n) const {
-        unsigned indexFromZero = n-1;
-        if(not is_positive_integer(n) or indexFromZero >= boost::math::max_prime)
+        if(not is_index_in_allowed_range(n))
         {
-          BOOST_THROW_EXCEPTION(std::invalid_argument(createRangeError(n)));
+          BOOST_THROW_EXCEPTION(std::invalid_argument(createIndexNotInRangeExplanation(n)));
         }
-        return boost::math::prime(indexFromZero); // boost::math calculates 1st prime at index 0.
+        auto indexFromZero = n-1u; // boost::math calculates 1st prime at index 0.
+        return boost::math::prime(indexFromZero);
     }
 }

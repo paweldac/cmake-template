@@ -1,10 +1,14 @@
 include_guard()
 
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
+include(colorful-message)
+
+set(DEFAULT_BUILD_TYPE "RelWithDebInfo")
+
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING
         "Choose build type." FORCE)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+endif()
 
-message(STATUS "Build type is set to: ${CMAKE_BUILD_TYPE}")
+cmessage(STATUS "Build type is set to: ${CMAKE_BUILD_TYPE}")
