@@ -27,3 +27,9 @@
 *.exe
 *.out
 *.app
+
+# out-of-source build dir
+build/
+
+# vscode workspace
+.vscode/

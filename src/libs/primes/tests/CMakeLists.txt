@@ -10,6 +10,7 @@ add_test_executable(${MODULE_NAME_TESTS}
         DEPENDS
             GTest::gtest
             GTest::gtest_main
+            Boost::headers
         META_TARGETS
             ${PROJECT_NAME}.tests
 )

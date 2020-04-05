@@ -3,11 +3,13 @@
 #include <boost/throw_exception.hpp>
 #include <stdexcept>
 #include <string>
-
+#include <sstream>
 namespace {
     auto createNegativeArgumentExplanation(int passedArgument)
     {
-        return std::string{"Number of primes to sum must be positive integer. Got "} + std::to_string(passedArgument);
+        std::stringstream ss;
+        ss << "Number of primes to sum must be non-negative integer. Passed value: " << passedArgument;
+        return ss.str();
     }
 }
 
@@ -27,7 +29,7 @@ namespace adder {
       return 0;
     }
     auto result = 0u;
-    for(auto index = 1; index <= numberOfPrimes; index++)
+    for(auto index = 1u; index <= unsigned(numberOfPrimes); index++)
     {
       result += primesCalculator.getPrime(index);
     }
