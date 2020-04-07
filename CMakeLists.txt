@@ -1,8 +1,10 @@
-project(cmake-template)
-
 cmake_minimum_required(VERSION 3.17)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include(policies)
+
+project(cmake-template)
 
 include(compilation-flags)
 include(colorful-message)

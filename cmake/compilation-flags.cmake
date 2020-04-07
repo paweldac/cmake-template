@@ -10,9 +10,16 @@ endif()
 
 option(ENABLE_MORE_WARNINGS "Enable reasonable amount of warnigns" ON)
 if (ENABLE_MORE_WARNINGS)
-    add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang,GNU>:-Wall;-Wextra;-Wold-style-cast;-Wconversion;-Wnull-dereference;-Wdouble-promotion>")
-    add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,GNU>:-Wduplicated-cond;-Wduplicated-branches;-Wlogical-op;-Wuseless-cast;-Wshadow>")
-    add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang>:-Wpointer-arith;-Wshadow-all;-Wconditional-uninitialized;-Wcast-align;-Wnon-virtual-dtor;-Wunused>")
+    add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang,GNU>:-Wall;-Wextra;-Wold-style-cast;-Wconversion;-Wdouble-promotion>")
+
+    add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,GNU>:-Wlogical-op;-Wuseless-cast;-Wshadow>")
+    add_compile_options("$<$<AND:$<COMPILE_LANG_AND_ID:CXX,GNU>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,6.0.0>>:-Wduplicated-cond;-Wnull-dereference>")
+    add_compile_options("$<$<AND:$<COMPILE_LANG_AND_ID:CXX,GNU>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,7.0.0>>:-Wduplicated-branches>")
+
+    add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang>:-Wnull-dereference;-Wpointer-arith;-Wshadow-all;-Wconditional-uninitialized;-Wcast-align;-Wnon-virtual-dtor;-Wunused>")
+    add_compile_options("$<$<AND:$<COMPILE_LANG_AND_ID:CXX,Clang>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,6.0.0>>:-Wno-missing-braces>")
+    add_compile_options("$<$<AND:$<COMPILE_LANG_AND_ID:CXX,AppleClang>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,10.0.0>>:-Wno-missing-braces>")
+
     add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/Wall>")
 endif()
 
