@@ -8,7 +8,7 @@
 
 namespace mocks {
   struct PrimesCalculatorMock : primes::PrimesCalculator {
-        MOCK_CONST_METHOD1(getPrime, unsigned(primes::PrimesCalculator::Index));
+        MOCK_METHOD(unsigned, getPrime, (primes::PrimesCalculator::Index), (const, override));
   };
 }
 
