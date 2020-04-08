@@ -62,6 +62,8 @@ function(add_mocks_target MOCKS_TARGET_NAME)
         cmessage(FATAL_ERROR "Target: ${MOCKS_TARGET_NAME} lacks directory with mocks.")
     endif()
     add_library(${MOCKS_TARGET_NAME} INTERFACE)
+    #GoogleTest MOCKMETHOD macro uses zero-arguments variadic macros
+    target_compile_options(${MOCKS_TARGET_NAME} INTERFACE "-Wno-gnu-zero-variadic-macro-arguments")
     target_include_directories(${MOCKS_TARGET_NAME} INTERFACE ${ARGS_DIR})
     target_link_libraries(${MOCKS_TARGET_NAME}
           INTERFACE
