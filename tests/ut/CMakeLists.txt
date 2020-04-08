@@ -7,9 +7,6 @@ add_test_executable(${PROJECT_NAME}.ut
         ut.cpp
      DEPENDS
         PrimesCalculatorMocks
-        GTest::gtest
-        GTest::gtest_main
-        GTest::gmock
      META_TARGETS
         ${PROJECT_NAME}.tests
 )
@@ -21,9 +18,6 @@ add_test_executable(PrimesAccumulator.ut
         PrimesAccumulatorTests.cpp
      DEPENDS
         PrimesCalculatorMocks
-        GTest::gtest
-        GTest::gtest_main
-        GTest::gmock
      META_TARGETS
         ${PROJECT_NAME}.tests
 )
