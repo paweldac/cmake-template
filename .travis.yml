@@ -179,8 +179,8 @@ install:
   # Install GoogleTest
   - |
     GTEST_GIT_REPO="https://github.com/google/googletest.git"
-    GTEST_GIT_HASH="b77e5c76252bac322bb82c5b444f050bd0d92451"
-    GTEST_DIR="${DEPS_DIR}/googletest/googletest-b77e5c7"
+    GTEST_GIT_HASH="703bd9caab50b139428cea1aaff9974ebee5742e"
+    GTEST_DIR="${DEPS_DIR}/googletest/googletest-703bd9c"
     if [[ "${BUILD_TESTS}" == "true" ]]; then
       if [[ -z "$(ls -A ${GTEST_DIR})" ]]; then
         mkdir -p ${GTEST_DIR}
