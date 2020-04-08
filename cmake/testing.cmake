@@ -39,7 +39,14 @@ function(add_test_executable TEST_TARGET)
         cmessage(FATAL_ERROR "Target: ${TEST_TARGET} lacks sources.")
     endif()
     add_executable(${TEST_TARGET} "${ARGS_SOURCES}")
-    target_link_libraries(${TEST_TARGET} PRIVATE "${ARGS_SUT}" "${ARGS_DEPENDS}")
+    target_link_libraries(${TEST_TARGET}
+          PRIVATE
+            "${ARGS_SUT}"
+            "${ARGS_DEPENDS}"
+            GTest::gmock
+            GTest::gtest
+            GTest::gtest_main
+    )
     if(ARGS_SUT)
         target_include_directories(${TEST_TARGET} PRIVATE $<TARGET_PROPERTY:${ARGS_SUT},INCLUDE_DIRECTORIES>)
     endif()
