@@ -25,6 +25,17 @@ cache:
 
 jobs:
   include:
+    - name: Scripts check
+      env: SCVERSION=v0.7.1 SC_DIR=${HOME}/deps/shellcheck-${SCVERSION}
+      addons: { apt: { packages: ["xz-utils"] } }
+      install:
+        - |
+          SC_URL="https://github.com/koalaman/shellcheck/releases/download/${SCVERSION}/shellcheck-${SCVERSION}.linux.x86_64.tar.xz"
+          mkdir -p ${SC_DIR} && travis_retry wget --no-check-certificate --quiet -O - ${SC_URL} | tar --strip-components=1 -xJ -C ${SC_DIR} || exit 1
+      before_script:
+        ${SC_DIR}/shellcheck --version
+      script:
+        ${SC_DIR}/shellcheck --version
     - os: osx
       env: XCODE_BUILD_VERSION=11A1027 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       osx_image: xcode11.3
