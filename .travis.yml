@@ -35,7 +35,7 @@ jobs:
       before_script:
         ${SC_DIR}/shellcheck --version
       script:
-        ${SC_DIR}/shellcheck --version
+        ${SC_DIR}/shellcheck --color ${TRAVIS_BUILD_DIR}/scripts/format_code || exit 1
     - os: osx
       env: XCODE_BUILD_VERSION=11A1027 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       osx_image: xcode11.3
