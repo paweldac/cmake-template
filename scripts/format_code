@@ -1,0 +1,175 @@
+#!/bin/bash
+
+set -euo pipefail
+
+script_path="${BASH_SOURCE[0]}"
+while [ -h "${script_path}" ]; do # resolve ${script_path} until the file is no longer a symlink
+  script_dir="$( cd -P "$( dirname "${script_path}" )" >/dev/null 2>&1 && pwd )"
+  script_path="$(readlink "${script_path}")"
+  [[ ${script_path} != /* ]] && script_path="${script_dir}/${script_path}" # if ${script_path} was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+script_dir="$( cd -P "$( dirname "${script_path}" )" >/dev/null 2>&1 && pwd )"
+repository_root_dir="${script_dir}/../"
+
+function display_usage()
+{
+  echo "Usage: $0 [-g <LLVM|Google|Chromium|Mozilla|WebKit|Microsoft>] [-c] [DIRECTORIES]"
+  echo "Available options:"
+  echo "-g              Generates .clang-format file in root of repository based on one of"
+  echo "                predefined styles. Possible options are: LLVM, Google, Chromium,  "
+  echo "                Mozilla, WebKit, Microsoft."
+  echo "-c              Check only mode, files will not be formated. Fails on first error."
+  echo "[DIRECTORIES]   Directories where to look for C++ files for style formating."
+  exit 0
+}
+
+function echoerr
+{
+  echo "${@}" 1>&2;
+}
+
+function display_missing_style_file_error
+{
+  echoerr "Missing .clang-format file in root of repository. Please use '-g' to generate one."
+  exit 1
+}
+
+function display_missing_directories_error
+{
+  echoerr "Missing directories in input. Please provide directories where to search for c++ files."
+  exit 1
+}
+
+function display_wrong_style_setting_in_user_input_error
+{
+  echoerr "Provided wrong style. Please pick one from: LLVM, Google, Chromium, Mozilla, WebKit, Microsoft."
+  exit 1
+}
+
+function to_lower_case
+{
+  if [ "$#" -eq 1 ]; then
+      local lower_case_txt
+      lower_case_txt="$( echo "${1}" | tr '[:upper:]' '[:lower:]' )"
+      echo "${lower_case_txt}"
+  else
+    echoerr "to_lower_case expects 1 argument, provided ${#}"
+    exit 1
+  fi
+}
+
+declare -a supported_styles=("llvm" "google" "chromium" "mozilla" "webkit" "microsoft")
+
+function is_supported_style
+{
+  if [ "$#" -eq 1 ]; then
+    for style in "${supported_styles[@]}"; do
+      if [ "${1}" == "${style}" ]; then
+        return 0
+      fi
+    done
+    return 1
+  else
+    echoerr "is_supported_style expects 1 argument, provided ${#}"
+    exit 1
+  fi
+}
+
+function export_clang_format_style_to_file
+{
+  if [ "$#" -eq 2 ]; then
+      clang-format -style="${1}" -dump-config > "${2}"
+  else
+    echoerr "export_clang_format_style_to_file expects 2 arguments, provided ${#}"
+    exit 1
+  fi
+}
+
+function apply_clang_format_style_on_file
+{
+  if [ "$#" -eq 1 ]; then
+      clang-format -style=file -i "${1}"
+  else
+    echoerr "apply_clang_format_style_on_file expects 1 argument, provided ${#}"
+    exit 1
+  fi
+}
+
+function check_if_file_is_properly_formatted
+{
+  if [ "$#" -eq 1 ]; then
+      clang-format -style=file "${1}" | diff "${1}" - -u || ( echoerr "${1} is not properly formated"; exit 1 )
+  else
+    echoerr "check_if_file_is_properly_formatted expects 1 argument, provided ${#}"
+    exit 1
+  fi
+}
+
+function clang_format_style_exists_in_dir
+{
+  if [ "$#" -eq 1 ]; then
+    if [[ -f "${1}/.clang-format" ]] || [[ -f "${1}/_clang-format" ]]; then
+      return 0
+    else
+      return 1
+    fi
+  else
+    echoerr "clang_format_style_exists_in_dir expects 1 argument, provided ${#}"
+    exit 1
+  fi
+}
+
+command=apply_clang_format_style_on_file
+generated_style_file=false
+check_flag=false
+while getopts ":g:c" option; do
+  case "${option}" in
+    g)
+      style=$(to_lower_case "${OPTARG}")
+      if is_supported_style "${style}"; then
+        export_clang_format_style_to_file "${style}" "${repository_root_dir}/.clang-format"
+        generated_style_file=true
+      else
+        display_wrong_style_setting_in_user_input_error
+      fi
+      ;;
+    c)
+      command=check_if_file_is_properly_formatted
+      check_flag=true
+      ;;
+    *)
+      display_usage
+      ;;
+  esac
+done
+shift "$((OPTIND-1))"
+
+#if user executed script without parameters print help
+if [ "$#" -eq 0 ] && ! ${check_flag} && ! ${generated_style_file}; then
+    display_usage
+fi
+
+#if check if not requested and directories are missing,
+#but user generated style script should not fail
+if [ "$#" -eq 0 ] && ! ${check_flag} && ${generated_style_file}; then
+    exit 0
+fi
+
+#if check is requested and directories are missing, script should fail
+if [ "$#" -eq 0 ] && ${check_flag}; then
+    display_missing_directories_error
+fi
+
+if clang_format_style_exists_in_dir "${repository_root_dir}"; then
+  find "${@}" -type f   \
+    \( -iname '*.h'     \
+    -o -iname '*.hpp'   \
+    -o -iname '*.c'     \
+    -o -iname '*.cpp'   \
+    -o -iname '*.proto' \
+    \) -print0 | while IFS= read -r -d '' file; do "${command}" "${file}"; done
+else
+  display_missing_style_file_error
+fi
+
+exit 0
