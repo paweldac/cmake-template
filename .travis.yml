@@ -36,6 +36,27 @@ jobs:
         ${SC_DIR}/shellcheck --version
       script:
         ${SC_DIR}/shellcheck --color ${TRAVIS_BUILD_DIR}/scripts/format_code || exit 1
+    - name: Code format check
+      addons: {
+        apt: {
+          sources: [
+            {
+              sourceline: "deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main",
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+            }
+          ],
+          packages: ["clang-format-10"]
+        }
+      }
+      install:
+        # Set new clang-format in PATH
+        - mkdir -p ${HOME}/.local/bin
+        - ln -s /usr/bin/clang-format-10 ~/.local/bin/clang-format
+        - export PATH=${HOME}/.local/bin:${PATH}
+      before_sctip:
+        clang-format --version
+      scrip:
+        ${TRAVIS_BUILD_DIR}/scripts/format_code -c ${TRAVIS_BUILD_DIR} || exit 1
     - os: osx
       env: XCODE_BUILD_VERSION=11A1027 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       osx_image: xcode11.3
