@@ -1,8 +1,8 @@
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
-#include "mocks/PrimesCalculatorMock.hpp"
 #include "PrimesAccumulator.hpp"
+#include "mocks/PrimesCalculatorMock.hpp"
 
 using namespace testing;
 
@@ -11,18 +11,17 @@ struct PrimesAccumulatorTests : Test {
   adder::PrimesAccumulator sut{primesCalculatorMock};
 };
 
-TEST_F(PrimesAccumulatorTests, WhenPassedNegativeValueAsFirstNthPrimes_ShouldThrowInvalidArgument)
-{
+TEST_F(PrimesAccumulatorTests,
+       WhenPassedNegativeValueAsFirstNthPrimes_ShouldThrowInvalidArgument) {
   EXPECT_THROW(sut.sumNthPrimes(-1), std::invalid_argument);
 }
 
-TEST_F(PrimesAccumulatorTests, WhenPassedZeroPrimesToSum_ResultShouldBeZero)
-{
+TEST_F(PrimesAccumulatorTests, WhenPassedZeroPrimesToSum_ResultShouldBeZero) {
   EXPECT_EQ(sut.sumNthPrimes(0), 0);
 }
 
-TEST_F(PrimesAccumulatorTests, WhenPassedNthPrimes_PrimesShouldBeTakenPrimesCalculatorAndAccumulated)
-{
+TEST_F(PrimesAccumulatorTests,
+       WhenPassedNthPrimes_PrimesShouldBeTakenPrimesCalculatorAndAccumulated) {
   const auto firstPrime = 1u;
   const auto secondPrime = 2u;
   EXPECT_CALL(primesCalculatorMock, getPrime(1)).WillOnce(Return(firstPrime));

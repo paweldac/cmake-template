@@ -4,12 +4,12 @@
 #pragma once
 
 namespace primes {
-    class PrimesCalculator {
-    public:
-        using Index = unsigned;
-        virtual ~PrimesCalculator() = default;
-        virtual unsigned getPrime(Index) const = 0;
-    };
-}
+class PrimesCalculator {
+ public:
+  using Index = unsigned;
+  virtual ~PrimesCalculator() = default;
+  virtual unsigned getPrime(Index) const = 0;
+};
+}  // namespace primes
 
 #endif

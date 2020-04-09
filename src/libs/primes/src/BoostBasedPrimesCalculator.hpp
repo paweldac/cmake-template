@@ -6,10 +6,10 @@
 #include "primes/PrimesCalculator.hpp"
 
 namespace primes {
-    class BoostBasedPrimesCalculator : public PrimesCalculator {
-    public:
-        unsigned getPrime(PrimesCalculator::Index) const override;
-    };
-}
+class BoostBasedPrimesCalculator : public PrimesCalculator {
+ public:
+  unsigned getPrime(PrimesCalculator::Index) const override;
+};
+}  // namespace primes
 
 #endif

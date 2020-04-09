@@ -6,13 +6,13 @@
 #include <memory>
 
 namespace primes {
-    class PrimesCalculator;
+class PrimesCalculator;
 
-    class IPrimesCalculatorFactory {
-    public:
-        virtual ~IPrimesCalculatorFactory() = default;
-        virtual std::unique_ptr<PrimesCalculator> create() const = 0;
-    };
-}
+class IPrimesCalculatorFactory {
+ public:
+  virtual ~IPrimesCalculatorFactory() = default;
+  virtual std::unique_ptr<PrimesCalculator> create() const = 0;
+};
+}  // namespace primes
 
 #endif

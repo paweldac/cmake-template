@@ -4,12 +4,14 @@
 #pragma once
 
 #include <gmock/gmock.h>
+
 #include "primes/PrimesCalculator.hpp"
 
 namespace mocks {
-  struct PrimesCalculatorMock : primes::PrimesCalculator {
-        MOCK_METHOD(unsigned, getPrime, (primes::PrimesCalculator::Index), (const, override));
-  };
-}
+struct PrimesCalculatorMock : primes::PrimesCalculator {
+  MOCK_METHOD(unsigned, getPrime, (primes::PrimesCalculator::Index),
+              (const, override));
+};
+}  // namespace mocks
 
 #endif

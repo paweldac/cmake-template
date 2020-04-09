@@ -4,17 +4,18 @@
 #pragma once
 
 namespace primes {
-  class PrimesCalculator;
+class PrimesCalculator;
 }
 
 namespace adder {
-  class PrimesAccumulator {
-  public:
-    PrimesAccumulator(const primes::PrimesCalculator&);
-    unsigned sumNthPrimes(int) const;
-  private:
-    const primes::PrimesCalculator& primesCalculator;
-  };
-}
+class PrimesAccumulator {
+ public:
+  PrimesAccumulator(const primes::PrimesCalculator&);
+  unsigned sumNthPrimes(int) const;
+
+ private:
+  const primes::PrimesCalculator& primesCalculator;
+};
+}  // namespace adder
 
 #endif
