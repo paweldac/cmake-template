@@ -5,7 +5,7 @@
 
 #include <array>
 
-/* 
+/*
 The First 10,000 Primes
 https://primes.utm.edu/lists/small/10000.txt
 */

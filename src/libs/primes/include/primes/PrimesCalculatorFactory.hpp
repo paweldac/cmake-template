@@ -7,10 +7,10 @@
 
 namespace primes {
 class PrimesCalculator;
-    class PrimesCalculatorFactory : public IPrimesCalculatorFactory {
-    public:
-        std::unique_ptr<PrimesCalculator> create()  const override;
-    };
-}
+class PrimesCalculatorFactory : public IPrimesCalculatorFactory {
+ public:
+  std::unique_ptr<PrimesCalculator> create() const override;
+};
+}  // namespace primes
 
 #endif

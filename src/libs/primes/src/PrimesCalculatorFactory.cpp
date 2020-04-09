@@ -1,10 +1,11 @@
 #include "primes/PrimesCalculatorFactory.hpp"
-#include "BoostBasedPrimesCalculator.hpp"
+
 #include <memory>
 
+#include "BoostBasedPrimesCalculator.hpp"
+
 namespace primes {
-        std::unique_ptr<PrimesCalculator> PrimesCalculatorFactory::create() const
-        {
-            return std::make_unique<BoostBasedPrimesCalculator>();
-        }
+std::unique_ptr<PrimesCalculator> PrimesCalculatorFactory::create() const {
+  return std::make_unique<BoostBasedPrimesCalculator>();
 }
+}  // namespace primes
