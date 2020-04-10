@@ -1,7 +1,9 @@
 include_guard()
 
+set(FORMAT_SCRIPT ${CMAKE_SOURCE_DIR}/scripts/format_code)
+
 add_custom_target(
     format
-    COMMAND find src tests -type f '\(' -iname *.h -o -iname *.hpp -o -iname *.c -o -iname *.cpp '\)' | xargs clang-format -style=file -i
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMAND ${FORMAT_SCRIPT} "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/tests"
+    VERBATIM
 )
