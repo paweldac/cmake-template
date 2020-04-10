@@ -49,9 +49,9 @@ function display_wrong_style_setting_in_user_input_error
 function to_lower_case
 {
   if [ "$#" -eq 1 ]; then
-      local lower_case_txt
-      lower_case_txt="$( echo "${1}" | tr '[:upper:]' '[:lower:]' )"
-      echo "${lower_case_txt}"
+    local lower_case_txt
+    lower_case_txt="$( echo "${1}" | tr '[:upper:]' '[:lower:]' )"
+    echo "${lower_case_txt}"
   else
     echoerr "to_lower_case expects 1 argument, provided ${#}"
     exit 1
@@ -78,7 +78,7 @@ function is_supported_style
 function export_clang_format_style_to_file
 {
   if [ "$#" -eq 2 ]; then
-      clang-format -style="${1}" -dump-config > "${2}"
+    clang-format -style="${1}" -dump-config > "${2}"
   else
     echoerr "export_clang_format_style_to_file expects 2 arguments, provided ${#}"
     exit 1
@@ -88,7 +88,7 @@ function export_clang_format_style_to_file
 function apply_clang_format_style_on_file
 {
   if [ "$#" -eq 1 ]; then
-      clang-format -style=file -i "${1}"
+    clang-format -style=file -i "${1}"
   else
     echoerr "apply_clang_format_style_on_file expects 1 argument, provided ${#}"
     exit 1
@@ -98,7 +98,7 @@ function apply_clang_format_style_on_file
 function check_if_file_is_properly_formatted
 {
   if [ "$#" -eq 1 ]; then
-      clang-format -style=file "${1}" | diff "${1}" - -u || ( echoerr "${1} is not properly formated"; exit 1 )
+    clang-format -style=file "${1}" | diff "${1}" - -u || ( echoerr "${1} is not properly formated"; exit 1 )
   else
     echoerr "check_if_file_is_properly_formatted expects 1 argument, provided ${#}"
     exit 1
@@ -146,18 +146,18 @@ shift "$((OPTIND-1))"
 
 #if user executed script without parameters print help
 if [ "$#" -eq 0 ] && ! ${check_flag} && ! ${generated_style_file}; then
-    display_usage
+  display_usage
 fi
 
-#if check if not requested and directories are missing,
+#if check is not requested and directories are missing,
 #but user generated style script should not fail
 if [ "$#" -eq 0 ] && ! ${check_flag} && ${generated_style_file}; then
-    exit 0
+  exit 0
 fi
 
 #if check is requested and directories are missing, script should fail
 if [ "$#" -eq 0 ] && ${check_flag}; then
-    display_missing_directories_error
+  display_missing_directories_error
 fi
 
 if clang_format_style_exists_in_dir "${repository_root_dir}"; then
