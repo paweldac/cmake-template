@@ -13,6 +13,7 @@ include(build-dirs)
 include(build-types)
 include(clang-format)
 include(cpp-standard)
+include(find-alternative-linkers)
 
 in_source_build_guard()
 
