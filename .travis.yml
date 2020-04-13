@@ -123,15 +123,29 @@ jobs:
           packages: ["clang-10"]
         }
       }
+    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true MEMORY_SANITIZER=Valgrind BUILD_TYPE=RelWithDebugInfo
+      addons: {
+        apt: {
+          sources: [
+            {
+              sourceline: "deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main",
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+            }
+          ],
+          packages: ["clang-10", "valgrind"]
+        }
+      }
     - env: COMPILER=g++-5 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
-      addons: { apt: { packages: ["g++-5", "valgrind"], sources: ["ubuntu-toolchain-r-test"] } }
+      addons: { apt: { packages: ["g++-5"], sources: ["ubuntu-toolchain-r-test"] } }
     - env: COMPILER=g++-6 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
-      addons: { apt: { packages: ["g++-6", "valgrind"], sources: ["ubuntu-toolchain-r-test"] } }
+      addons: { apt: { packages: ["g++-6"], sources: ["ubuntu-toolchain-r-test"] } }
     - env: COMPILER=g++-7 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
-      addons: { apt: { packages: ["g++-7", "valgrind"], sources: ["ubuntu-toolchain-r-test"] } }
+      addons: { apt: { packages: ["g++-7"], sources: ["ubuntu-toolchain-r-test"] } }
     - env: COMPILER=g++-8 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
-      addons: { apt: { packages: ["g++-8", "valgrind"], sources: ["ubuntu-toolchain-r-test"] } }
+      addons: { apt: { packages: ["g++-8"], sources: ["ubuntu-toolchain-r-test"] } }
     - env: COMPILER=g++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+      addons: { apt: { packages: ["g++-9"], sources: ["ubuntu-toolchain-r-test"] } }
+    - env: COMPILER=g++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo MEMORY_SANITIZER=Valgrind
       addons: { apt: { packages: ["g++-9", "valgrind"], sources: ["ubuntu-toolchain-r-test"] } }
 
 git:
@@ -145,9 +159,10 @@ install:
   - DEPS_DIR="${HOME}/deps"
   - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
   - export PARALLEL_BUILD_JOBS="${PARALLEL_BUILD_JOBS:-$(nproc)}"
-  # Set env variables
+  # Set env variables and default build settings
   - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
   - ${CXX} --version
+  - if [[ "${MEMORY_SANITIZER}" == "" ]]; then MEMORY_SANITIZER=None; fi
   # Prepare prefix root used for dependency installation
   - (mkdir -p ${HOME}/prefix_root/usr/includes && mkdir -p ${HOME}/prefix_root/usr/lib && mkdir -p ${HOME}/prefix_root/usr/share)
   # Set new gcc/clang in PATH
@@ -251,13 +266,20 @@ install:
 
 before_script:
   - cd ${TRAVIS_BUILD_DIR}
-  - (mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX="${HOME}/prefix_root" -DBOOST_ROOT=${BOOST_DIR} -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_TESTING="$BUILD_TESTS" )
+  - (mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX="${HOME}/prefix_root" -DMEMORY_SANITIZER=${MEMORY_SANITIZER} -DBOOST_ROOT=${BOOST_DIR} -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_TESTING="$BUILD_TESTS" )
 
 script:
   - |
     cd build
     if [[ "${BUILD_TESTS}" == "true" ]]; then
       make cmake-template.tests_build -j${PARALLEL_BUILD_JOBS}
-      ctest --schedule-random --output-on-failure --parallel ${PARALLEL_BUILD_JOBS} .
+      if [[ "${MEMORY_SANITIZER}" != "None" ]]; then
+        if ! ctest --schedule-random --output-on-failure --parallel ${PARALLEL_BUILD_JOBS} -D ExperimentalMemCheck; then
+          find Testing/Temporary -name "MemoryChecker.*.log" -exec cat {} +
+          exit 1
+        fi
+      else
+        ctest --schedule-random --output-on-failure --parallel ${PARALLEL_BUILD_JOBS} .
+      fi
     fi
   - make cmake-template.app -j${PARALLEL_BUILD_JOBS}

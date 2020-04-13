@@ -14,6 +14,7 @@ include(build-types)
 include(clang-format)
 include(cpp-standard)
 include(find-alternative-linkers)
+include(memory-sanitizers)
 
 in_source_build_guard()
 
