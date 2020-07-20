@@ -35,8 +35,8 @@ jobs:
       before_script:
         ${SC_DIR}/shellcheck --version
       script:
-        ${SC_DIR}/shellcheck --color ${TRAVIS_BUILD_DIR}/scripts/format_code || exit 1
-    - name: Code format check
+        ${SC_DIR}/shellcheck --color ${TRAVIS_BUILD_DIR}/scripts/* || exit 1
+    - name: Style format check
       addons: {
         apt: {
           sources: [
@@ -53,10 +53,13 @@ jobs:
         - mkdir -p ${HOME}/.local/bin
         - ln -s /usr/bin/clang-format-10 ~/.local/bin/clang-format
         - export PATH=${HOME}/.local/bin:${PATH}
-      before_sctip:
-        clang-format --version
-      scrip:
-        ${TRAVIS_BUILD_DIR}/scripts/format_code -c ${TRAVIS_BUILD_DIR} || exit 1
+        - pip install cmake-format==0.6.10
+      before_script:
+        - clang-format --version
+        - cmake-format --version
+      script:
+        - ${TRAVIS_BUILD_DIR}/scripts/format_code -c ${TRAVIS_BUILD_DIR} || exit 1
+        - ${TRAVIS_BUILD_DIR}/scripts/format_cmake -c ${TRAVIS_BUILD_DIR} || exit 1
     - os: osx
       env: XCODE_BUILD_VERSION=11A1027 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       osx_image: xcode11.3
