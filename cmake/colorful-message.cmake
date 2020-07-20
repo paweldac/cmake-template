@@ -1,5 +1,6 @@
 include_guard()
 
+# cmake-format: off
 #https://stackoverflow.com/a/19578320/6367382
 if($ENV{SHELL} MATCHES "bash|csh|zsh")
     string(ASCII 27 Esc)
@@ -20,6 +21,7 @@ if($ENV{SHELL} MATCHES "bash|csh|zsh")
     set(BoldCyan    "${Esc}[1;36m")
     set(BoldWhite   "${Esc}[1;37m")
 endif()
+# cmake-format: on
 
 function(cmessage)
   list(GET ARGV 0 MessageType)
