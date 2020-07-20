@@ -15,7 +15,7 @@ function display_usage()
 {
   echo "Usage: $0 [-g] [-c] [DIRECTORIES]"
   echo "Available options:"
-  echo "-g              Generates .cmake-format file in root of repository based on default settings."
+  echo "-g              Generates .cmake-format.yaml file in root of repository based on default settings."
   echo "-c              Check only mode, files will not be formated. Fails on first error."
   echo "[DIRECTORIES]   Directories where to look for *.cmake and CMakeLists.txt files for style formating."
   exit 0
@@ -28,7 +28,7 @@ function echoerr
 
 function display_missing_style_file_error
 {
-  echoerr "Missing .cmake-format file in root of repository. Please use '-g' to generate one."
+  echoerr "Missing .cmake-format.yaml file in root of repository. Please use '-g' to generate one."
   exit 1
 }
 
