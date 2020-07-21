@@ -178,7 +178,7 @@ install:
     fi
   - export PATH=${HOME}/.local/bin:${PATH}
   # Install CMake
-  - CMAKE_MAJOR_VERSION=3.17
+  - CMAKE_MAJOR_VERSION=3.18
   - CMAKE_MINOR_VERSION=0
   - CMAKE_VERSION="${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}"
   - |
@@ -189,7 +189,7 @@ install:
       fi
       export PATH=${DEPS_DIR}/cmake-${CMAKE_VERSION}/bin:${PATH}
     else
-      brew install cmake || brew upgrade cmake
+      pip install cmake==${CMAKE_VERSION}
     fi
   - cmake --version
 
