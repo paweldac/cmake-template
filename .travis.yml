@@ -138,6 +138,18 @@ jobs:
           packages: ["clang-10", "valgrind"]
         }
       }
+    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true MEMORY_SANITIZER=AddressSanitizer BUILD_TYPE=RelWithDebugInfo
+      addons: {
+        apt: {
+          sources: [
+            {
+              sourceline: "deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main",
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+            }
+          ],
+          packages: ["clang-10"]
+        }
+      }
     - env: COMPILER=g++-5 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: { apt: { packages: ["g++-5"], sources: ["ubuntu-toolchain-r-test"] } }
     - env: COMPILER=g++-6 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
@@ -150,6 +162,8 @@ jobs:
       addons: { apt: { packages: ["g++-9"], sources: ["ubuntu-toolchain-r-test"] } }
     - env: COMPILER=g++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo MEMORY_SANITIZER=Valgrind
       addons: { apt: { packages: ["g++-9", "valgrind"], sources: ["ubuntu-toolchain-r-test"] } }
+    - env: COMPILER=g++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo MEMORY_SANITIZER=AddressSanitizer
+      addons: { apt: { packages: ["g++-9"], sources: ["ubuntu-toolchain-r-test"] } }
 
 git:
   submodules: false
@@ -269,7 +283,7 @@ install:
 
 before_script:
   - cd ${TRAVIS_BUILD_DIR}
-  - (mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX="${HOME}/prefix_root" -DMEMORY_SANITIZER=${MEMORY_SANITIZER} -DBOOST_ROOT=${BOOST_DIR} -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_TESTING="$BUILD_TESTS" )
+  - (mkdir build && cd build && cmake .. -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_INSTALL_PREFIX="${HOME}/prefix_root" -DMEMORY_SANITIZER=${MEMORY_SANITIZER} -DBOOST_ROOT=${BOOST_DIR} -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_TESTING="$BUILD_TESTS" )
 
 script:
   - |
