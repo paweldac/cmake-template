@@ -4,12 +4,14 @@ include(colorful-message)
 
 set(VALGRIND "Valgrind")
 set(ASAN "AddressSanitizer")
+set(TSAN "ThreadSanitizer")
 
 if(NOT MEMORY_SANITIZER)
   set(MEMORY_SANITIZER
       "None"
-      CACHE STRING "Memory sanitizer for build, choose from ${VALGRIND}, ${ASAN} and None" FORCE)
-  set_property(CACHE MEMORY_SANITIZER PROPERTY STRINGS ${VALGRIND} ${ASAN} "None")
+      CACHE STRING "Memory sanitizer for build, choose from ${VALGRIND}, ${ASAN}, ${TSAN} and None"
+            FORCE)
+  set_property(CACHE MEMORY_SANITIZER PROPERTY STRINGS ${VALGRIND} ${ASAN} ${TSAN} "None")
 endif()
 
 if(${MEMORY_SANITIZER} MATCHES ${VALGRIND})
@@ -29,6 +31,13 @@ if(${MEMORY_SANITIZER} MATCHES ${ASAN})
     "$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang,GNU>:-fsanitize=address;-fno-omit-frame-pointer;-fsanitize-address-use-after-scope;-fstack-protector-all>"
   )
   add_link_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang,GNU>:-fsanitize=address>")
+endif()
+
+if(${MEMORY_SANITIZER} MATCHES ${TSAN})
+  set(MEMORYCHECK_TYPE ThreadSanitizer)
+  set(MEMORYCHECK_SANITIZER_OPTIONS "verbosity=1:history_size=7")
+  add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang,GNU>:-fsanitize=thread;>")
+  add_link_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang,GNU>:-fsanitize=thread>")
 endif()
 
 if(NOT ${MEMORY_SANITIZER} MATCHES "None")
