@@ -21,6 +21,7 @@ cache:
     - ${HOME}/deps/llvm-8.0.1
     - ${HOME}/deps/llvm-9.0.1
     - ${HOME}/deps/llvm-10.0.0
+    - ${HOME}/deps/llvm-instrumented-10.0.0
     - ${HOME}/deps/cmake-3.18.2
 
 jobs:
@@ -147,7 +148,7 @@ jobs:
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
             }
           ],
-          packages: ["clang-10"]
+          packages: ["clang-10", "llvm-10"]
         }
       }
     - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true MEMORY_SANITIZER=ThreadSanitizer BUILD_TYPE=RelWithDebugInfo
@@ -159,7 +160,43 @@ jobs:
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
             }
           ],
-          packages: ["clang-10"]
+          packages: ["clang-10", "llvm-10"]
+        }
+      }
+    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true MEMORY_SANITIZER=LeakSanitizer BUILD_TYPE=RelWithDebugInfo
+      addons: {
+        apt: {
+          sources: [
+            {
+              sourceline: "deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main",
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+            }
+          ],
+          packages: ["clang-10", "llvm-10"]
+        }
+      }
+    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true MEMORY_SANITIZER=MemorySanitizer BUILD_TYPE=RelWithDebugInfo
+      addons: {
+        apt: {
+          sources: [
+            {
+              sourceline: "deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main",
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+            }
+          ],
+          packages: ["clang-10", "llvm-10"]
+        }
+      }
+    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true MEMORY_SANITIZER=UndefinedBehaviorSanitizer BUILD_TYPE=RelWithDebugInfo
+      addons: {
+        apt: {
+          sources: [
+            {
+              sourceline: "deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main",
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+            }
+          ],
+          packages: ["clang-10", "llvm-10"]
         }
       }
     - env: COMPILER=g++-5 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
@@ -177,6 +214,10 @@ jobs:
     - env: COMPILER=g++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo MEMORY_SANITIZER=AddressSanitizer
       addons: { apt: { packages: ["g++-9"], sources: ["ubuntu-toolchain-r-test"] } }
     - env: COMPILER=g++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo MEMORY_SANITIZER=ThreadSanitizer
+      addons: { apt: { packages: ["g++-9"], sources: ["ubuntu-toolchain-r-test"] } }
+    - env: COMPILER=g++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo MEMORY_SANITIZER=LeakSanitizer
+      addons: { apt: { packages: ["g++-9"], sources: ["ubuntu-toolchain-r-test"] } }
+    - env: COMPILER=g++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo MEMORY_SANITIZER=UndefinedBehaviorSanitizer
       addons: { apt: { packages: ["g++-9"], sources: ["ubuntu-toolchain-r-test"] } }
 
 git:
@@ -241,18 +282,33 @@ install:
         LIBCXXABI_URL="https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/libcxxabi-${LLVM_VERSION}.src.tar.xz"
       fi
 
-      if [[ -z "$(ls -A ${DEPS_DIR}/llvm-${LLVM_VERSION})" ]]; then
-        mkdir -p llvm-${LLVM_VERSION} llvm-${LLVM_VERSION}/build llvm-${LLVM_VERSION}/projects/libcxx llvm-${LLVM_VERSION}/projects/libcxxabi
-        travis_retry wget -O - ${LLVM_URL} | tar --strip-components=1 -xJ -C llvm-${LLVM_VERSION} || exit 1
-        travis_retry wget -O - ${LIBCXX_URL} | tar --strip-components=1 -xJ -C llvm-${LLVM_VERSION}/projects/libcxx || exit 1
-        travis_retry wget -O - ${LIBCXXABI_URL} | tar --strip-components=1 -xJ -C llvm-${LLVM_VERSION}/projects/libcxxabi || exit 1
-        (cd llvm-${LLVM_VERSION}/build && cmake .. -DCMAKE_INSTALL_PREFIX=${DEPS_DIR}/llvm-${LLVM_VERSION}/install) || exit 1
-        (cd llvm-${LLVM_VERSION}/build/projects/libcxx && make install -j${PARALLEL_BUILD_JOBS}) || exit 1
-        (cd llvm-${LLVM_VERSION}/build/projects/libcxxabi && make install -j${PARALLEL_BUILD_JOBS}) || exit 1
+      if [[ "${MEMORY_SANITIZER}" == "MemorySanitizer" ]]; then
+        if [[ -z "$(ls -A ${DEPS_DIR}/llvm-instrumented-${LLVM_VERSION})" ]]; then
+          mkdir -p llvm-instrumented-${LLVM_VERSION} llvm-instrumented-${LLVM_VERSION}/build llvm-instrumented-${LLVM_VERSION}/projects/libcxx llvm-instrumented-${LLVM_VERSION}/projects/libcxxabi
+          travis_retry wget -O - ${LLVM_URL} | tar --strip-components=1 -xJ -C llvm-instrumented-${LLVM_VERSION} || exit 1
+          travis_retry wget -O - ${LIBCXX_URL} | tar --strip-components=1 -xJ -C llvm-instrumented-${LLVM_VERSION}/projects/libcxx || exit 1
+          travis_retry wget -O - ${LIBCXXABI_URL} | tar --strip-components=1 -xJ -C llvm-instrumented-${LLVM_VERSION}/projects/libcxxabi || exit 1
+          (cd llvm-instrumented-${LLVM_VERSION}/build && cmake .. -DLLVM_USE_SANITIZER=MemoryWithOrigins -DCMAKE_INSTALL_PREFIX=${DEPS_DIR}/llvm-instrumented-${LLVM_VERSION}/install) || exit 1
+          (cd llvm-instrumented-${LLVM_VERSION}/build/projects/libcxx && make install -j${PARALLEL_BUILD_JOBS}) || exit 1
+          (cd llvm-instrumented-${LLVM_VERSION}/build/projects/libcxxabi && make install -j${PARALLEL_BUILD_JOBS}) || exit 1
+        fi
+        export CXXFLAGS="-fsanitize=memory -isystem ${DEPS_DIR}/llvm-instrumented-${LLVM_VERSION}/install/include/c++/v1"
+        export LDFLAGS="-L ${DEPS_DIR}/llvm-instrumented-${LLVM_VERSION}/install/lib -l c++ -l c++abi"
+        export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/llvm-instrumented-${LLVM_VERSION}/install/lib"
+      else
+        if [[ -z "$(ls -A ${DEPS_DIR}/llvm-${LLVM_VERSION})" ]]; then
+          mkdir -p llvm-${LLVM_VERSION} llvm-${LLVM_VERSION}/build llvm-${LLVM_VERSION}/projects/libcxx llvm-${LLVM_VERSION}/projects/libcxxabi
+          travis_retry wget -O - ${LLVM_URL} | tar --strip-components=1 -xJ -C llvm-${LLVM_VERSION} || exit 1
+          travis_retry wget -O - ${LIBCXX_URL} | tar --strip-components=1 -xJ -C llvm-${LLVM_VERSION}/projects/libcxx || exit 1
+          travis_retry wget -O - ${LIBCXXABI_URL} | tar --strip-components=1 -xJ -C llvm-${LLVM_VERSION}/projects/libcxxabi || exit 1
+          (cd llvm-${LLVM_VERSION}/build && cmake .. -DCMAKE_INSTALL_PREFIX=${DEPS_DIR}/llvm-${LLVM_VERSION}/install) || exit 1
+          (cd llvm-${LLVM_VERSION}/build/projects/libcxx && make install -j${PARALLEL_BUILD_JOBS}) || exit 1
+          (cd llvm-${LLVM_VERSION}/build/projects/libcxxabi && make install -j${PARALLEL_BUILD_JOBS}) || exit 1
+        fi
+        export CXXFLAGS="-isystem ${DEPS_DIR}/llvm-${LLVM_VERSION}/install/include/c++/v1"
+        export LDFLAGS="-L ${DEPS_DIR}/llvm-${LLVM_VERSION}/install/lib -l c++ -l c++abi"
+        export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/llvm-${LLVM_VERSION}/install/lib"
       fi
-      export CXXFLAGS="-isystem ${DEPS_DIR}/llvm-${LLVM_VERSION}/install/include/c++/v1"
-      export LDFLAGS="-L ${DEPS_DIR}/llvm-${LLVM_VERSION}/install/lib -l c++ -l c++abi"
-      export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/llvm-${LLVM_VERSION}/install/lib"
     fi
   # Install GoogleTest
   - |
