@@ -253,7 +253,8 @@ install:
         mkdir -p ${BOOST_DIR}
         { travis_retry wget -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
         if [[ "${CXX%%+*}" == "clang" ]]; then
-          (cd ${BOOST_DIR} && ./bootstrap.sh --with-toolset=clang --prefix=${BOOST_DIR} && ./b2 toolset=clang headers && ./b2 toolset=clang cxxflags="-std=c++1y -stdlib=libc++ ${CXXFLAGS}" linkflags="-stdlib=libc++ ${LDFLAGS}");
+          (cd ${BOOST_DIR} && ./bootstrap.sh --with-toolset=clang --prefix=${BOOST_DIR} && ./b2 toolset=clang headers && ./b2 toolset=clang cxxflags="-std=c++1y -stdlib=libc++ ${CXXFLAGS}" linkflags="-stdlib=libc++ ${LDFLAGS}") || exit 0
+          cat ${BOOST_DIR}/bootstrap.log
         else
           (cd ${BOOST_DIR} && ./bootstrap.sh --with-toolset=gcc --prefix=${BOOST_DIR} && ./b2 toolset=gcc headers && ./b2 toolset=gcc cxxflags="-std=c++1y");
         fi
