@@ -21,7 +21,7 @@ cache:
     - ${HOME}/deps/llvm-8.0.1
     - ${HOME}/deps/llvm-9.0.1
     - ${HOME}/deps/llvm-10.0.0
-    - ${HOME}/deps/cmake-3.17.0
+    - ${HOME}/deps/cmake-3.18.2
 
 jobs:
   include:
@@ -179,7 +179,7 @@ install:
   - export PATH=${HOME}/.local/bin:${PATH}
   # Install CMake
   - CMAKE_MAJOR_VERSION=3.18
-  - CMAKE_MINOR_VERSION=0
+  - CMAKE_MINOR_VERSION=2
   - CMAKE_VERSION="${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}"
   - |
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
