@@ -4,18 +4,18 @@ language: cpp
 
 cache:
   directories:
-    - ${HOME}/deps/boost/xcode-11A1027/boost-1.70.0
-    - ${HOME}/deps/boost/xcode-9F2000/boost-1.70.0
-    - ${HOME}/deps/boost/g++-5/boost-1.70.0
-    - ${HOME}/deps/boost/g++-6/boost-1.70.0
-    - ${HOME}/deps/boost/g++-7/boost-1.70.0
-    - ${HOME}/deps/boost/g++-8/boost-1.70.0
-    - ${HOME}/deps/boost/g++-9/boost-1.70.0
-    - ${HOME}/deps/boost/clang++-6.0/boost-1.70.0
-    - ${HOME}/deps/boost/clang++-7/boost-1.70.0
-    - ${HOME}/deps/boost/clang++-8/boost-1.70.0
-    - ${HOME}/deps/boost/clang++-9/boost-1.70.0
-    - ${HOME}/deps/boost/clang++-10/boost-1.70.0
+    - ${HOME}/deps/boost/xcode-11A1027/boost-1.74.0
+    - ${HOME}/deps/boost/xcode-9F2000/boost-1.74.0
+    - ${HOME}/deps/boost/g++-5/boost-1.74.0
+    - ${HOME}/deps/boost/g++-6/boost-1.74.0
+    - ${HOME}/deps/boost/g++-7/boost-1.74.0
+    - ${HOME}/deps/boost/g++-8/boost-1.74.0
+    - ${HOME}/deps/boost/g++-9/boost-1.74.0
+    - ${HOME}/deps/boost/clang++-6.0/boost-1.74.0
+    - ${HOME}/deps/boost/clang++-7/boost-1.74.0
+    - ${HOME}/deps/boost/clang++-8/boost-1.74.0
+    - ${HOME}/deps/boost/clang++-9/boost-1.74.0
+    - ${HOME}/deps/boost/clang++-10/boost-1.74.0
     - ${HOME}/deps/llvm-6.0.1
     - ${HOME}/deps/llvm-7.1.0
     - ${HOME}/deps/llvm-8.0.1
@@ -61,12 +61,12 @@ jobs:
         - ${TRAVIS_BUILD_DIR}/scripts/format_code -c ${TRAVIS_BUILD_DIR} || exit 1
         - ${TRAVIS_BUILD_DIR}/scripts/format_cmake -c ${TRAVIS_BUILD_DIR} || exit 1
     - os: osx
-      env: XCODE_BUILD_VERSION=11A1027 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+      env: XCODE_BUILD_VERSION=11A1027 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       osx_image: xcode11.3
     - os: osx
-      env: XCODE_BUILD_VERSION=9F2000 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+      env: XCODE_BUILD_VERSION=9F2000 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       osx_image: xcode9.4
-    - env: COMPILER=clang++-6.0 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=clang++-6.0 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: {
         apt: {
           sources: [
@@ -78,7 +78,7 @@ jobs:
           packages: ["clang-6.0"]
         }
       }
-    - env: COMPILER=clang++-7 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=clang++-7 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: {
         apt: {
           sources: [
@@ -90,7 +90,7 @@ jobs:
           packages: ["clang-7"]
         }
       }
-    - env: COMPILER=clang++-8 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=clang++-8 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: {
         apt: {
           sources: [
@@ -102,7 +102,7 @@ jobs:
           packages: ["clang-8"]
         }
       }
-    - env: COMPILER=clang++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=clang++-9 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: {
         apt: {
           sources: [
@@ -114,7 +114,7 @@ jobs:
           packages: ["clang-9"]
         }
       }
-    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=clang++-10 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: {
         apt: {
           sources: [
@@ -126,7 +126,7 @@ jobs:
           packages: ["clang-10"]
         }
       }
-    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true MEMORY_SANITIZER=Valgrind BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=clang++-10 BOOST_VERSION=1.74.0 BUILD_TESTS=true MEMORY_SANITIZER=Valgrind BUILD_TYPE=RelWithDebugInfo
       addons: {
         apt: {
           sources: [
@@ -138,17 +138,17 @@ jobs:
           packages: ["clang-10", "valgrind"]
         }
       }
-    - env: COMPILER=g++-5 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=g++-5 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: { apt: { packages: ["g++-5"], sources: ["ubuntu-toolchain-r-test"] } }
-    - env: COMPILER=g++-6 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=g++-6 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: { apt: { packages: ["g++-6"], sources: ["ubuntu-toolchain-r-test"] } }
-    - env: COMPILER=g++-7 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=g++-7 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: { apt: { packages: ["g++-7"], sources: ["ubuntu-toolchain-r-test"] } }
-    - env: COMPILER=g++-8 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=g++-8 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: { apt: { packages: ["g++-8"], sources: ["ubuntu-toolchain-r-test"] } }
-    - env: COMPILER=g++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=g++-9 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: { apt: { packages: ["g++-9"], sources: ["ubuntu-toolchain-r-test"] } }
-    - env: COMPILER=g++-9 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo MEMORY_SANITIZER=Valgrind
+    - env: COMPILER=g++-9 BOOST_VERSION=1.74.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo MEMORY_SANITIZER=Valgrind
       addons: { apt: { packages: ["g++-9", "valgrind"], sources: ["ubuntu-toolchain-r-test"] } }
 
 git:
