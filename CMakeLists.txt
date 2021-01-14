@@ -15,6 +15,7 @@ include(clang-format)
 include(cpp-standard)
 include(find-alternative-linkers)
 include(memory-sanitizers)
+include(export-compile-commands_json)
 
 in_source_build_guard()
 
