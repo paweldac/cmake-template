@@ -33,3 +33,7 @@ build/
 
 # vscode workspace
 .vscode/
+
+# vscode clangd plugin files
+compile_commands.json
+.cache/
