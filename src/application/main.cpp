@@ -14,11 +14,14 @@ int main() {
   auto primesCalculatorFactory = createPrimesCalculatorFactory();
   auto primesCalculator = primesCalculatorFactory->create();
   std::cout << "Primes: " << std::endl;
-  for (auto i = 1u; i < 10u; i++) {
+  const auto limit = 10u;
+  for (auto i = 1u; i < limit; i++) {
     std::cout << i << ": " << primesCalculator->getPrime(i) << std::endl;
   }
+  const auto primeNumIndex = 5;
   std::cout << "Sum of first 5 primes: "
-            << adder::PrimesAccumulator{*primesCalculator}.sumNthPrimes(5)
+            << adder::PrimesAccumulator{*primesCalculator}.sumNthPrimes(
+                   primeNumIndex)
             << std::endl;
   return 0;
 }

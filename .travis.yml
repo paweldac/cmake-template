@@ -199,6 +199,18 @@ jobs:
           packages: ["clang-10", "llvm-10"]
         }
       }
+    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo CLANG_TIDY_EXE=clang-tidy-10 CLANG_TIDY=ON
+      addons: {
+        apt: {
+          sources: [
+            {
+              sourceline: "deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main",
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+            }
+          ],
+          packages: ["clang-10", "llvm-10"]
+        }
+      }
     - env: COMPILER=g++-5 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
       addons: { apt: { packages: ["g++-5"], sources: ["ubuntu-toolchain-r-test"] } }
     - env: COMPILER=g++-6 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
@@ -235,6 +247,7 @@ install:
   - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
   - ${CXX} --version
   - if [[ "${MEMORY_SANITIZER}" == "" ]]; then MEMORY_SANITIZER=None; fi
+  - if [[ "${CLANG_TIDY}" == "" ]]; then CLANG_TIDY=OFF; fi
   # Prepare prefix root used for dependency installation
   - (mkdir -p ${HOME}/prefix_root/usr/includes && mkdir -p ${HOME}/prefix_root/usr/lib && mkdir -p ${HOME}/prefix_root/usr/share)
   # Set new gcc/clang in PATH
@@ -244,6 +257,10 @@ install:
       ln -s /usr/bin/${COMPILER} ~/.local/bin/clang++
     else
       ln -s /usr/bin/${COMPILER} ~/.local/bin/g++
+    fi
+  - |
+    if [[ ${CLANG_TIDY_EXE} != "" ]]; then
+      ln -s /usr/bin/${CLANG_TIDY_EXE} ~/.local/bin/clang-tidy
     fi
   - export PATH=${HOME}/.local/bin:${PATH}
   # Install CMake
@@ -353,7 +370,7 @@ install:
 
 before_script:
   - cd ${TRAVIS_BUILD_DIR}
-  - (mkdir build && cd build && cmake .. -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_INSTALL_PREFIX="${HOME}/prefix_root" -DMEMORY_SANITIZER=${MEMORY_SANITIZER} -DBOOST_ROOT=${BOOST_DIR} -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_TESTING="$BUILD_TESTS" )
+  - (mkdir build && cd build && cmake .. -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_INSTALL_PREFIX="${HOME}/prefix_root" -DMEMORY_SANITIZER=${MEMORY_SANITIZER} -DBOOST_ROOT=${BOOST_DIR} -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DENABLE_CLANG_TIDY="$CLANG_TIDY" -DBUILD_TESTING="$BUILD_TESTS" )
 
 script:
   - |

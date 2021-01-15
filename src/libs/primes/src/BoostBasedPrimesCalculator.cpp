@@ -7,9 +7,9 @@
 #include <string>
 
 namespace {
-static constexpr primes::PrimesCalculator::Index minIndex = 1;
-static constexpr primes::PrimesCalculator::Index maxIndex = 10000;
-auto is_index_in_allowed_range(primes::PrimesCalculator::Index n) {
+constexpr primes::PrimesCalculator::Index minIndex = 1;
+constexpr primes::PrimesCalculator::Index maxIndex = 10000;
+auto isIndexInAllowedRange(primes::PrimesCalculator::Index n) {
   return n >= minIndex && n <= maxIndex;
 }
 
@@ -23,7 +23,7 @@ auto createIndexNotInRangeExplanation(primes::PrimesCalculator::Index actual) {
 
 namespace primes {
 unsigned BoostBasedPrimesCalculator::getPrime(PrimesCalculator::Index n) const {
-  if (not is_index_in_allowed_range(n)) {
+  if (not isIndexInAllowedRange(n)) {
     BOOST_THROW_EXCEPTION(
         std::invalid_argument(createIndexNotInRangeExplanation(n)));
   }
