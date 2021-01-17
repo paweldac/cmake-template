@@ -171,7 +171,7 @@ jobs:
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
             }
           ],
-          packages: ["clang-6", "iwyu"]
+          packages: ["clang-6.0", "iwyu"]
         }
       }
     - env: COMPILER=g++-5 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
@@ -236,7 +236,7 @@ install:
 
   # Install the right version of clang, libc++ and libc++abi
   - |
-    if [[ "${CXX%%+*}" == "clang" ]] && [[ "${INCLUDE_WHAT_YOU_USE}"" == "OFF" ]]; then
+    if [[ "${CXX%%+*}" == "clang" ]] && [[ "${INCLUDE_WHAT_YOU_USE}" == "OFF" ]]; then
       if [[ "${CXX}" == "clang++-6.0" ]]; then LLVM_VERSION="6.0.1";
       elif [[ "${CXX}" == "clang++-7" ]];   then LLVM_VERSION="7.1.0";
       elif [[ "${CXX}" == "clang++-8" ]];   then LLVM_VERSION="8.0.1";
