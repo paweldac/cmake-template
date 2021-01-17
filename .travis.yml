@@ -236,7 +236,7 @@ install:
 
   # Install the right version of clang, libc++ and libc++abi
   - |
-    if [[ "${CXX%%+*}" == "clang" ]]; then
+    if [[ "${CXX%%+*}" == "clang" ]] && [[ "${INCLUDE_WHAT_YOU_USE}"" == "OFF" ]]; then
       if [[ "${CXX}" == "clang++-6.0" ]]; then LLVM_VERSION="6.0.1";
       elif [[ "${CXX}" == "clang++-7" ]];   then LLVM_VERSION="7.1.0";
       elif [[ "${CXX}" == "clang++-8" ]];   then LLVM_VERSION="8.0.1";
