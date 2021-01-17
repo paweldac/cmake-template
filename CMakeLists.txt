@@ -16,6 +16,7 @@ include(cpp-standard)
 include(find-alternative-linkers)
 include(memory-sanitizers)
 include(export-compile-commands_json)
+include(include-what-you-use)
 
 in_source_build_guard()
 

@@ -1,0 +1,4 @@
+[
+  { include: ["@<gtest/.*>", "private", "<gtest/gtest.h>", "public"] },
+  { include: ["@<gmock/.*>", "private", "<gmock/gmock.h>", "public"] }
+]

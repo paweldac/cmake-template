@@ -1,5 +1,8 @@
 include_guard()
 
+include(include-what-you-use)
+include(colorful-message)
+
 add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang>:-stdlib=libc++>")
 
 option(TREAT_WARNINGS_AS_ERRORS "Treat compilation warnings as errors" ON)
@@ -14,13 +17,19 @@ if(ENABLE_MORE_WARNINGS)
     "$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang,GNU>:-Wall;-Wextra;-Wold-style-cast;-Wconversion;-Wdouble-promotion>"
   )
 
-  add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,GNU>:-Wlogical-op;-Wuseless-cast;-Wshadow>")
-  add_compile_options(
-    "$<$<AND:$<COMPILE_LANG_AND_ID:CXX,GNU>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,6.0.0>>:-Wduplicated-cond;-Wnull-dereference>"
-  )
-  add_compile_options(
-    "$<$<AND:$<COMPILE_LANG_AND_ID:CXX,GNU>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,7.0.0>>:-Wduplicated-branches>"
-  )
+  if(ENABLE_INCLUDE_WHAT_YOU_USE)
+    cmessage(
+      NOTICE
+      "Ignoring GNU compiler specific warnings, when include-what-you-use analysis is enabled")
+  else()
+    add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,GNU>:-Wlogical-op;-Wuseless-cast;-Wshadow>")
+    add_compile_options(
+      "$<$<AND:$<COMPILE_LANG_AND_ID:CXX,GNU>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,6.0.0>>:-Wduplicated-cond;-Wnull-dereference>"
+    )
+    add_compile_options(
+      "$<$<AND:$<COMPILE_LANG_AND_ID:CXX,GNU>,$<VERSION_GREATER_EQUAL:$<CXX_COMPILER_VERSION>,7.0.0>>:-Wduplicated-branches>"
+    )
+  endif()
 
   add_compile_options(
     "$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang>:-Wnull-dereference;-Wpointer-arith;-Wshadow-all;-Wconditional-uninitialized;-Wcast-align;-Wnon-virtual-dtor;-Wunused>"

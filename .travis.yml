@@ -162,7 +162,7 @@ jobs:
           packages: ["clang-10"]
         }
       }
-    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
+    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo INCLUDE_WHAT_YOU_USE=ON
       addons: {
         apt: {
           sources: [
@@ -171,7 +171,7 @@ jobs:
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
             }
           ],
-          packages: ["clang-10", "llvm-10"]
+          packages: ["clang-10", "iwyu"]
         }
       }
     - env: COMPILER=g++-5 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
@@ -206,6 +206,7 @@ install:
   - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
   - ${CXX} --version
   - if [[ "${MEMORY_SANITIZER}" == "" ]]; then MEMORY_SANITIZER=None; fi
+  - if [[ "${INCLUDE_WHAT_YOU_USE}" == "" ]]; then INCLUDE_WHAT_YOU_USE=OFF; fi
   # Prepare prefix root used for dependency installation
   - (mkdir -p ${HOME}/prefix_root/usr/includes && mkdir -p ${HOME}/prefix_root/usr/lib && mkdir -p ${HOME}/prefix_root/usr/share)
   # Set new gcc/clang in PATH
@@ -309,7 +310,7 @@ install:
 
 before_script:
   - cd ${TRAVIS_BUILD_DIR}
-  - (mkdir build && cd build && cmake .. -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_INSTALL_PREFIX="${HOME}/prefix_root" -DMEMORY_SANITIZER=${MEMORY_SANITIZER} -DBOOST_ROOT=${BOOST_DIR} -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DBUILD_TESTING="$BUILD_TESTS" )
+  - (mkdir build && cd build && cmake .. -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DCMAKE_INSTALL_PREFIX="${HOME}/prefix_root" -DMEMORY_SANITIZER=${MEMORY_SANITIZER} -DBOOST_ROOT=${BOOST_DIR} -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DENABLE_INCLUDE_WHAT_YOU_USE="$INCLUDE_WHAT_YOU_USE" -DBUILD_TESTING="$BUILD_TESTS" )
 
 script:
   - |

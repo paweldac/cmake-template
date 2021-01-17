@@ -14,7 +14,7 @@ set(DEFAULT_CPP_STANDARD ${CPP_17_STR})
 
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD
-      "${CPP_17_STR}"
+      ${DEFAULT_CPP_STANDARD}
       CACHE
         STRING
         "C++ standard, choose from ${CPP_98_STR}, ${CPP_11_STR}, ${CPP_14_STR}, ${CPP_17_STR} and ${CPP_20_STR}"
