@@ -1,5 +1,7 @@
 include_guard()
 
+option(COLORFUL_OUTPUT "Enable/disable colorful output" ON)
+
 # cmake-format: off
 #https://stackoverflow.com/a/19578320/6367382
 if($ENV{SHELL} MATCHES "bash|csh|zsh")
@@ -25,19 +27,39 @@ endif()
 
 function(cmessage)
   list(GET ARGV 0 MessageType)
-  if(MessageType STREQUAL FATAL_ERROR OR MessageType STREQUAL SEND_ERROR)
-    list(REMOVE_AT ARGV 0)
-    message(${MessageType} "${BoldRed}${ARGV}${ColourReset}")
-  elseif(MessageType STREQUAL WARNING OR MessageType STREQUAL NOTICE)
-    list(REMOVE_AT ARGV 0)
-    message(${MessageType} "${BoldYellow}${ARGV}${ColourReset}")
-  elseif(MessageType STREQUAL AUTHOR_WARNING)
-    list(REMOVE_AT ARGV 0)
-    message(${MessageType} "${BoldCyan}${ARGV}${ColourReset}")
-  elseif(MessageType STREQUAL STATUS)
-    list(REMOVE_AT ARGV 0)
-    message(${MessageType} "${Green}${ARGV}${ColourReset}")
+  if(COLORFUL_OUTPUT)
+    if(MessageType STREQUAL FATAL_ERROR OR MessageType STREQUAL SEND_ERROR)
+      list(REMOVE_AT ARGV 0)
+      message(${MessageType} "${BoldRed}${ARGV}${ColourReset}")
+    elseif(MessageType STREQUAL WARNING OR MessageType STREQUAL NOTICE)
+      list(REMOVE_AT ARGV 0)
+      message(${MessageType} "${BoldYellow}${ARGV}${ColourReset}")
+    elseif(MessageType STREQUAL AUTHOR_WARNING)
+      list(REMOVE_AT ARGV 0)
+      message(${MessageType} "${BoldCyan}${ARGV}${ColourReset}")
+    elseif(MessageType STREQUAL STATUS)
+      list(REMOVE_AT ARGV 0)
+      message(${MessageType} "${Green}${ARGV}${ColourReset}")
+    else()
+      message("${ARGV}")
+    endif()
   else()
-    message("${ARGV}")
+    set(CMAKE_DEFAULT_MESSAGE_TYPES
+        FATAL_ERROR
+        SEND_ERROR
+        WARNING
+        AUTHOR_WARNING
+        DEPRECATION
+        NOTICE
+        STATUS
+        VERBOSE
+        DEBUG
+        TRACE)
+    if(MessageType IN_LIST CMAKE_DEFAULT_MESSAGE_TYPES)
+      list(REMOVE_AT ARGV 0)
+      message(${MessageType} "${ARGV}")
+    else()
+      message("${ARGV}")
+    endif()
   endif()
 endfunction()
