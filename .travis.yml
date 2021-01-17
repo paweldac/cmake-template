@@ -162,7 +162,7 @@ jobs:
           packages: ["clang-10"]
         }
       }
-    - env: COMPILER=clang++-10 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo INCLUDE_WHAT_YOU_USE=ON
+    - env: COMPILER=clang++-6.0 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo INCLUDE_WHAT_YOU_USE=ON
       addons: {
         apt: {
           sources: [
@@ -171,7 +171,7 @@ jobs:
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
             }
           ],
-          packages: ["clang-10", "iwyu"]
+          packages: ["clang-6", "iwyu"]
         }
       }
     - env: COMPILER=g++-5 BOOST_VERSION=1.70.0 BUILD_TESTS=true BUILD_TYPE=RelWithDebugInfo
