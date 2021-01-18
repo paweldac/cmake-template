@@ -1,0 +1,128 @@
+Checks: '-*,
+    clang-diagnostic-*,
+    boost-*,
+    bugprone-*,
+    cert-*,
+    clang-analyzer-*,
+    cppcoreguidelines-*,
+    -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+    -cppcoreguidelines-pro-bounds-constant-array-index,
+    -cppcoreguidelines-avoid-goto,
+    google-*,
+    -google-readability-avoid-underscore-in-googletest-name,
+    -google-readability-todo,
+    -google-readability-namespace-comments,
+    -google-runtime-references,
+    hicpp-*,
+    -hicpp-no-array-decay,
+    -hicpp-uppercase-literal-suffix,
+    -hicpp-named-parameter,
+    -hicpp-avoid-goto,
+    misc-*,
+    -misc-non-private-member-variables-in-classes,
+    modernize-*,
+    -modernize-use-trailing-return-type,
+    -modernize-use-nodiscard,
+    portability-*,
+    performance-*,
+    readability-*,
+    -readability-named-parameter,
+    -readability-uppercase-literal-suffix'
+WarningsAsErrors: '*'
+CheckOptions:
+- key: cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
+  value: '1'
+- key: cppcoreguidelines-macro-usage.CheckCapsOnly
+  value: '1'
+- key: google-global-names-in-headers.HeaderFileExtensions
+  value: h,hh,hpp,hxx
+- key: hicpp-use-emplace.ContainersWithPushBack
+  value: '::std::vector;::std::list;::std::deque'
+- key: hicpp-use-emplace.SmartPointers
+  value: '::std::shared_ptr;::std::unique_ptr;::std::auto_ptr;::std::weak_ptr'
+- key: hicpp-use-emplace.TupleMakeFunctions
+  value: '::std::make_pair;::std::make_tuple'
+- key: hicpp-use-emplace.TupleTypes
+  value: '::std::pair;::std::tuple'
+- key: hicpp-move-const-arg.CheckTriviallyCopyableMove
+  value: '1'
+- key: hicpp-no-malloc.Allocations
+  value: '::malloc;::calloc'
+- key: hicpp-no-malloc.Deallocations
+  value: '::free'
+- key: hicpp-no-malloc.Reallocations
+  value: '::realloc'
+- key: hicpp-special-member-functions.AllowSoleDefaultDtor
+  value: '1'
+- key: hicpp-use-auto.RemoveStars
+  value: '0'
+- key: misc-definitions-in-headers.HeaderFileExtensions
+  value: h,hh,hpp,hxx
+- key: misc-definitions-in-headers.UseHeaderFileExtension
+  value: '1'
+- key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+  value: '1'
+- key: misc-suspicious-string-compare.WarnOnLogicalNotComparison
+  value: '1'
+- key: modernize-use-auto.RemoveStars
+  value: '0'
+- key: modernize-loop-convert.NamingStyle
+  value: CamelCase
+- key: modernize-make-shared.MakeSmartPtrFunction
+  value: 'std::make_shared'
+- key: modernize-make-shared.MakeSmartPtrFunctionHeader
+  value: memory
+- key: modernize-use-emplace.ContainersWithPushBack
+  value: '::std::vector;::std::list;::std::deque'
+- key: modernize-use-emplace.SmartPointers
+  value: '::std::shared_ptr;::std::unique_ptr;::std::auto_ptr;::std::weak_ptr'
+- key: modernize-use-emplace.TupleMakeFunctions
+  value: '::std::make_pair;::std::make_tuple'
+- key: modernize-use-emplace.TupleTypes
+  value: '::std::pair;::std::tuple'
+- key: modernize-use-default-member-init.UseAssignment
+  value: '1'
+- key: performance-inefficient-string-concatenation.StrictMode
+  value: '1'
+- key: performance-for-range-copy.WarnOnAllAutoCopies
+  value: '1'
+- key: readability-function-size.BranchThreshold
+  value: '10'
+- key: readability-function-size.ParameterThreshold
+  value: '6'
+- key: readability-function-size.StatementThreshold
+  value: '30'
+- key: readability-simplify-boolean-expr.ChainedConditionalAssignment
+  value: '1'
+- key: readability-simplify-boolean-expr.ChainedConditionalReturn
+  value: '1'
+- key: readability-identifier-naming.ClassCase
+  value: CamelCase
+- key: readability-identifier-naming.ConstantCase
+  value: camelBack
+- key: readability-identifier-naming.ConstantParameterCase
+  value: camelBack
+- key: readability-identifier-naming.EnumCase
+  value: CamelCase
+- key: readability-identifier-naming.EnumConstantCase
+  value: camelBack
+- key: readability-identifier-naming.FunctionCase
+  value: camelBack
+- key: readability-identifier-naming.LocalConstantCase
+  value: camelBack
+- key: readability-identifier-naming.MacroDefinitionCase
+  value: UPPER_CASE
+- key: readability-identifier-naming.MethodCase
+  value: camelBack
+- key: readability-identifier-naming.NamespaceCase
+  value: lower_case
+- key: readability-identifier-naming.StructCase
+  value: CamelCase
+- key: readability-identifier-naming.TypeAliasCase
+  value: CamelCase
+- key: readability-identifier-naming.TypedefCase
+  value: CamelCase
+- key: readability-identifier-naming.TypeTemplateParameterCase
+  value: CamelCase
+- key: readability-identifier-naming.VariableCase
+  value: camelBack

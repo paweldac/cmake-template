@@ -10,7 +10,7 @@ class PrimesCalculator;
 namespace adder {
 class PrimesAccumulator {
  public:
-  PrimesAccumulator(const primes::PrimesCalculator&);
+  explicit PrimesAccumulator(const primes::PrimesCalculator&);
   unsigned sumNthPrimes(int) const;
 
  private:

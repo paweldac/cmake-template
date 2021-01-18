@@ -9,7 +9,7 @@
 The First 10,000 Primes
 https://primes.utm.edu/lists/small/10000.txt
 */
-constexpr std::array<unsigned, 10000> first_10000_primes = {
+constexpr std::array<unsigned, 10000> first10000Primes = {
     2,      3,      5,      7,      11,     13,     17,     19,     23,
     29,     31,     37,     41,     43,     47,     53,     59,     61,
     67,     71,     73,     79,     83,     89,     97,     101,    103,
