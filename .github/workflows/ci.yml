@@ -1,0 +1,176 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BUILD_TYPE: RelWithDebInfo
+
+jobs:
+  checks:
+    name: Scripts and formatting
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends clang-format shellcheck
+          python3 -m pip install --user cmake-format==0.6.10 pyyaml
+          echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+
+      - name: Check shell scripts
+        run: shellcheck --color=always scripts/*
+
+      - name: Check C++ formatting
+        run: scripts/format_code -c src tests
+
+      - name: Check CMake formatting
+        run: scripts/format_cmake -c .
+
+  build:
+    name: Build (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: GCC
+            os: ubuntu-22.04
+            cc: gcc
+            cxx: g++
+          - name: Clang with libc++
+            os: ubuntu-22.04
+            cc: clang
+            cxx: clang++
+          - name: AppleClang
+            os: macos-14
+            cc: clang
+            cxx: clang++
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            libboost-system-dev \
+            libgmock-dev \
+            libgtest-dev
+
+      - name: Install libc++
+        if: matrix.name == 'Clang with libc++'
+        run: |
+          sudo apt-get install --yes --no-install-recommends libc++-dev libc++abi-dev
+
+          cmake -S /usr/src/googletest -B "${RUNNER_TEMP}/googletest-build" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_FLAGS=-stdlib=libc++ \
+            -DCMAKE_EXE_LINKER_FLAGS=-stdlib=libc++ \
+            -DCMAKE_INSTALL_PREFIX="${RUNNER_TEMP}/googletest"
+          cmake --build "${RUNNER_TEMP}/googletest-build" --parallel
+          cmake --install "${RUNNER_TEMP}/googletest-build"
+
+          echo "CMAKE_PREFIX_PATH=${RUNNER_TEMP}/googletest" >> "${GITHUB_ENV}"
+          echo "LDFLAGS=-stdlib=libc++" >> "${GITHUB_ENV}"
+
+      - name: Install macOS dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew install boost googletest
+          echo "CMAKE_PREFIX_PATH=$(brew --prefix)" >> "${GITHUB_ENV}"
+
+      - name: Configure
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+            -DBUILD_TESTING=ON \
+            -DMEMORY_SANITIZER=None
+
+      - name: Build
+        run: cmake --build build --parallel --target cmake-template.tests_build cmake-template.app
+
+      - name: Test
+        run: ctest --test-dir build --schedule-random --output-on-failure --parallel 2
+
+  sanitizers:
+    name: ${{ matrix.sanitizer }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # MemorySanitizer needs an instrumented C++ standard library, which is
+        # not provided by GitHub-hosted runners.
+        sanitizer:
+          - Valgrind
+          - AddressSanitizer
+          - ThreadSanitizer
+          - LeakSanitizer
+          - UndefinedBehaviorSanitizer
+    env:
+      CC: gcc
+      CXX: g++
+      SANITIZER: ${{ matrix.sanitizer }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          packages=(libboost-system-dev libgmock-dev libgtest-dev)
+          if [[ "${SANITIZER}" == "Valgrind" ]]; then
+            packages+=(valgrind)
+          fi
+
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends "${packages[@]}"
+
+      - name: Configure
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+            -DBUILD_TESTING=ON \
+            -DMEMORY_SANITIZER="${SANITIZER}"
+
+      - name: Build
+        run: cmake --build build --parallel --target cmake-template.tests_build cmake-template.app
+
+      - name: Test with sanitizers
+        run: |
+          if [[ "${SANITIZER}" == "Valgrind" ]]; then
+            if ! ctest --test-dir build -T memcheck --schedule-random --output-on-failure --parallel 2; then
+              find build/Testing/Temporary -name 'MemoryChecker.*.log' -exec cat {} +
+              exit 1
+            fi
+          else
+            case "${SANITIZER}" in
+              AddressSanitizer) export ASAN_OPTIONS=halt_on_error=1:detect_leaks=1 ;;
+              ThreadSanitizer) export TSAN_OPTIONS=halt_on_error=1 ;;
+              LeakSanitizer) export LSAN_OPTIONS=exitcode=1 ;;
+              UndefinedBehaviorSanitizer) export UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 ;;
+            esac
+
+            ctest --test-dir build --schedule-random --output-on-failure --parallel 2
+          fi

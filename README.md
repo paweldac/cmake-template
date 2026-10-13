@@ -1,3 +1,3 @@
-# [WIP]cmake-template [![Build Status](https://travis-ci.org/paweldac/cmake-template.svg?branch=master)](https://travis-ci.org/paweldac/cmake-template)
+# [WIP]cmake-template [![CI](https://github.com/paweldac/cmake-template/actions/workflows/ci.yml/badge.svg)](https://github.com/paweldac/cmake-template/actions/workflows/ci.yml)
 
 CMake template for C++ projects with Boost and Google Test integration.
