@@ -37,14 +37,19 @@ function(add_test_executable TEST_TARGET)
   if(NOT ARGS_SOURCES)
     cmessage(FATAL_ERROR "Target: ${TEST_TARGET} lacks sources.")
   endif()
-  add_executable(${TEST_TARGET} "${ARGS_SOURCES}")
-  target_link_libraries(${TEST_TARGET} PRIVATE "${ARGS_SUT}" "${ARGS_DEPENDS}" GTest::gmock
-                                               GTest::gtest GTest::gtest_main)
+  add_executable(${TEST_TARGET} "${ARGS_SOURCES}" "${PROJECT_SOURCE_DIR}/tests/gtest_main.cpp")
+  target_link_libraries(${TEST_TARGET} PRIVATE "${ARGS_SUT}" "${ARGS_DEPENDS}" GTest::gtest
+                                               GTest::gmock)
   if(ARGS_SUT)
     target_include_directories(${TEST_TARGET}
                                PRIVATE $<TARGET_PROPERTY:${ARGS_SUT},INCLUDE_DIRECTORIES>)
   endif()
-  gtest_discover_tests(${TEST_TARGET} PROPERTIES LABELS "${ARGS_META_TARGETS}")
+  gtest_add_tests(
+    TARGET ${TEST_TARGET}
+    SOURCES ${ARGS_SOURCES}
+    EXTRA_ARGS --gtest_fail_if_no_test_linked
+    TEST_LIST REGISTERED_TESTS)
+  set_tests_properties(${REGISTERED_TESTS} PROPERTIES LABELS "${ARGS_META_TARGETS}")
   attach_targets_to_meta_target(TARGET_TO_ATTACH ${TEST_TARGET} META_TARGETS ${ARGS_META_TARGETS})
 endfunction()
 
@@ -63,7 +68,10 @@ function(add_mocks_target MOCKS_TARGET_NAME)
   endif()
   add_library(${MOCKS_TARGET_NAME} INTERFACE)
   # GoogleTest MOCKMETHOD macro uses zero-arguments variadic macros
-  target_compile_options(${MOCKS_TARGET_NAME} INTERFACE "-Wno-gnu-zero-variadic-macro-arguments")
+  target_compile_options(
+    ${MOCKS_TARGET_NAME}
+    INTERFACE
+      "$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang>:-Wno-gnu-zero-variadic-macro-arguments>")
   target_include_directories(${MOCKS_TARGET_NAME} INTERFACE ${ARGS_DIR})
   target_link_libraries(${MOCKS_TARGET_NAME} INTERFACE ${ARGS_MOCKS} GTest::gmock)
   attach_targets_to_meta_target(TARGET_TO_ATTACH ${MOCKS_TARGET_NAME}

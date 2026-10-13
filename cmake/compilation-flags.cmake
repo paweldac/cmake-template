@@ -1,6 +1,15 @@
 include_guard()
 
-add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang>:-stdlib=libc++>")
+if(APPLE)
+  set(DEFAULT_USE_LIBCXX ON)
+else()
+  set(DEFAULT_USE_LIBCXX OFF)
+endif()
+option(USE_LIBCXX "Use libc++ with Clang and AppleClang" ${DEFAULT_USE_LIBCXX})
+if(USE_LIBCXX)
+  add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang>:-stdlib=libc++>")
+  add_link_options("$<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang>:-stdlib=libc++>")
+endif()
 
 option(TREAT_WARNINGS_AS_ERRORS "Treat compilation warnings as errors" ON)
 if(TREAT_WARNINGS_AS_ERRORS)
@@ -32,7 +41,7 @@ if(ENABLE_MORE_WARNINGS)
     "$<$<AND:$<COMPILE_LANG_AND_ID:CXX,AppleClang>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,10.0.0>>:-Wno-missing-braces>"
   )
 
-  add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/Wall>")
+  add_compile_options("$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/W4;/permissive->")
 endif()
 
 option(ENABLE_PEDANTIC

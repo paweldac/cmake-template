@@ -4,7 +4,9 @@ include(colorful-message)
 
 option(ENABLE_LINK_WHAT_YOU_USE "Adds `-Wl,--no-as-needed` to targets linker flags" ON)
 
-if(ENABLE_LINK_WHAT_YOU_USE)
+if(ENABLE_LINK_WHAT_YOU_USE
+   AND UNIX
+   AND NOT APPLE)
   execute_process(
     COMMAND ${CMAKE_CXX_COMPILER} -Wl,--no-as-needed
     ERROR_STRIP_TRAILING_WHITESPACE
@@ -16,6 +18,9 @@ if(ENABLE_LINK_WHAT_YOU_USE)
              "ENABLE_LINK_WHAT_YOU_USE cannot be enabled. Linker doesn't support `--no-as-needed`")
     set(ENABLE_LINK_WHAT_YOU_USE OFF)
   endif()
+elseif(ENABLE_LINK_WHAT_YOU_USE)
+  cmessage(NOTICE "ENABLE_LINK_WHAT_YOU_USE is not supported on this platform")
+  set(ENABLE_LINK_WHAT_YOU_USE OFF)
 endif()
 
 set(CMAKE_LINK_WHAT_YOU_USE ${ENABLE_LINK_WHAT_YOU_USE})
