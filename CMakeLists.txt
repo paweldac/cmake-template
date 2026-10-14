@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-include(policies)
+include(policies NO_POLICY_SCOPE)
 
 project(cmake-template)
 

@@ -30,6 +30,7 @@
 
 # out-of-source build dir
 build/
+CMakeUserPresets.json
 
 # vscode workspace
 .vscode/
